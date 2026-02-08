@@ -7,6 +7,7 @@ import Employees from "./pages/hr/Employees"
 import EmployeeProfile from "./pages/hr/EmployeeProfile"
 import Attendance from "./pages/hr/Attendance"
 import Payroll from "./pages/hr/Payroll"
+import Reports from "./pages/Reports"
 import Login from "./pages/auth/Login"
 
 export default function App() {
@@ -43,6 +44,12 @@ export default function App() {
           <Route path="/payroll" element={
             <ProtectedRoute roles={["ADMIN", "HR"]}>
               <Payroll />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/reports" element={
+            <ProtectedRoute roles={["ADMIN", "HR"]}>
+              <Reports />
             </ProtectedRoute>
           } />
         </Routes>

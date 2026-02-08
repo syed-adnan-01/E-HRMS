@@ -9,6 +9,7 @@ export default function Sidebar() {
     { name: "Employees", path: "/employees", roles: ["ADMIN", "HR"] },
     { name: "Attendance", path: "/attendance", roles: ["ADMIN", "HR", "MANAGER"] },
     { name: "Payroll", path: "/payroll", roles: ["ADMIN", "HR"] },
+    { name: "Reports", path: "/reports", roles: ["ADMIN", "HR"] },
   ]
 
   return (
