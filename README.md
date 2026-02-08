@@ -162,6 +162,6 @@ Computer Science Engineering Student
 
 ## 📜 License
 
-This project is for **educational and academic use.**
+This project is for **Educational and Academic Use** the **MIT License**.
 
 ---
