@@ -1,16 +1,153 @@
-# React + Vite
+# Enterprise HR Management System (E-HRMS)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An **Enterprise HR Management System (E-HRMS)** is a scalable, modular, web-based application designed to manage and automate core human resource operations of an organization.  
+This project focuses on the **frontend implementation** using modern React tooling and enterprise UI patterns.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Project Overview
 
-## React Compiler
+This application serves as a **frontend foundation** for an enterprise-grade HRMS, covering:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Employee Management
+- Attendance Tracking
+- Payroll Scaffolding
+- Role-Based Access Control (RBAC)
+- Analytics Dashboard (KPIs & Charts)
+- Reports with Filters & Export
 
-## Expanding the ESLint configuration
+The project is intentionally structured to be **extensible, maintainable, and production-ready**.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 🛠️ Tech Stack
+
+- **React 18**
+- **Vite**
+- **TailwindCSS v3**
+- **React Router DOM**
+- **Recharts** (Charts & Analytics)
+- **Context API** (Auth & Global State)
+
+---
+
+## 🔐 Authentication & RBAC
+
+- Simple role-based login (Admin / HR / Manager)
+- Protected routes using `ProtectedRoute`
+- Role-based sidebar navigation
+- Frontend-only authentication (no backend yet)
+
+---
+
+## 📊 Dashboard Features
+
+- KPI Cards:
+  - Total Employees
+  - Active Employees
+  - Departments
+  - Open Positions
+- Charts:
+  - Headcount Trend
+  - Attendance Trend
+- Attendance Summary
+- Employee Status Distribution
+
+> ⚠️ Current dashboard metrics are mock values for UI scaffolding.
+
+---
+
+## 📋 Employee Management
+
+- Employee listing with table view
+- Search and department filter
+- Add employee modal form
+- Automatic ascending sort by Employee ID
+- Clickable employee profile view
+
+---
+
+## ⏱️ Attendance Module
+
+- Daily attendance marking
+- Present / Absent status
+- Attendance records display
+- UI-ready for backend integration
+
+---
+
+## 💰 Payroll Module
+
+- Payroll UI scaffolding
+- Base salary, deductions, net pay (mock values)
+- Designed for future payroll logic integration
+
+---
+
+## 📄 Reports Module
+
+- Employee reports
+- Department-based filtering
+- CSV export functionality
+- Frontend-only reporting logic
+
+---
+
+## 🎨 UI & UX Principles
+
+- Light mode only (corporate enterprise style)
+- Clean typography hierarchy
+- Consistent spacing and layout
+- Reusable UI components
+- Dashboard-first experience
+
+---
+
+### 1. Installation and Setup
+```bash
+git clone <repository-url>
+cd e-hrms
+```
+
+---
+
+### 2. Install Dependencies
+  ```bash
+  npm install
+  ```
+---  
+
+### 3. Run Development Server
+  ```bash
+  npm run dev
+  ```
+---  
+
+| Role    | Access Level |
+| ------- | ------------ |
+| ADMIN   | Full access  |
+| HR      | HR modules   |
+| MANAGER | Limited view |
+
+---
+
+📌 Project Status
+
+Frontend foundation completed
+This project currently focuses on UI architecture and interaction flow and is ready for backend integration.
+
+---
+
+👤 Author
+
+Anubhav
+Computer Science Engineering Student
+
+---
+
+📜 License
+
+This project is for educational and academic use.
+
+---
+
