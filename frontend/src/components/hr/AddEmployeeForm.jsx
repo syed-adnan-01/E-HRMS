@@ -1,36 +1,68 @@
+import { useState } from "react"
 import Input from "../ui/Input"
 import Select from "../ui/Select"
 
 export default function AddEmployeeForm({ onSubmit }) {
-  function handleSubmit(e) {
-    e.preventDefault()
-    const form = new FormData(e.target)
 
-    const employee = Object.fromEntries(form.entries())
-    onSubmit(employee)
+  const [form, setForm] = useState({
+    employeeId: "",
+    name: "",
+    email: "",
+    department: "",
+    role: "",
+    status: "Active"
+  })
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value })
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    onSubmit(form)
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <Input name="id" placeholder="Employee ID" required />
-      <Input name="name" placeholder="Name" required />
 
-      <Select name="department">
-        <option>Engineering</option>
-        <option>HR</option>
-        <option>Finance</option>
+      <Input
+        name="employeeId"
+        placeholder="Employee ID"
+        onChange={handleChange}
+      />
+
+      <Input
+        name="name"
+        placeholder="Full Name"
+        onChange={handleChange}
+      />
+
+      <Input
+        name="email"
+        placeholder="Email"
+        onChange={handleChange}
+      />
+
+      <Select name="department" onChange={handleChange}>
+        <option value="">Select Department</option>
+        <option value="Engineering">Engineering</option>
+        <option value="HR">HR</option>
+        <option value="Finance">Finance</option>
       </Select>
 
-      <Input name="role" placeholder="Role" required />
+      <Input
+        name="role"
+        placeholder="Role"
+        onChange={handleChange}
+      />
 
-      <Select name="status">
-        <option>Active</option>
-        <option>Inactive</option>
-      </Select>
-
-      <button className="w-full bg-blue-600 text-white py-2 rounded">
+      <button
+        type="submit"
+        className="w-full bg-blue-600 text-white py-2 rounded"
+      >
         Save Employee
       </button>
+
     </form>
   )
 }

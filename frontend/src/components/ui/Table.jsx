@@ -14,15 +14,13 @@ export default function Table({ columns, data }) {
           </tr>
         </thead>
         <tbody>
-          {data.map(row => (
-            <tr key={row.id} className="hover:bg-gray-50">
-              <td className="p-2 border">{row.id}</td>
-              <td className="p-2 border text-blue-600">
-                <Link to={`/employees/${row.id}`}>{row.name}</Link>
-              </td>
-              <td className="p-2 border">{row.department}</td>
-              <td className="p-2 border">{row.role}</td>
-              <td className="p-2 border">{row.status}</td>
+          {data.map((emp, idx) => (
+            <tr key={emp._id || idx}>
+              <td>{emp.employeeId}</td>
+              <td>{emp.name}</td>
+              <td>{emp.department}</td>
+              <td>{emp.role}</td>
+              <td>{emp.status}</td>
             </tr>
           ))}
         </tbody>
