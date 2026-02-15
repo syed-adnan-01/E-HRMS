@@ -5,27 +5,35 @@ import Table from "../../components/ui/Table"
 import Input from "../../components/ui/Input"
 import Select from "../../components/ui/Select"
 import Modal from "../../components/ui/Modal"
-import AddEmployeeForm from "../../components/hr/AddEmployeeForm"
 
-import { getEmployees, addEmployee } from "../../api/employeeApi"
+import AddEmployeeForm from "../../components/hr/AddEmployeeForm"
+import EditEmployeeForm from "../../components/hr/EditEmployeeForm"
+
+import {
+  getEmployees,
+  addEmployee,
+  updateEmployee
+} from "../../api/employeeApi"
 
 export default function Employees() {
 
   const [employees, setEmployees] = useState([])
   const [search, setSearch] = useState("")
   const [department, setDepartment] = useState("")
+
   const [open, setOpen] = useState(false)
+  const [editOpen, setEditOpen] = useState(false)
+  const [selected, setSelected] = useState(null)
 
   const columns = ["ID", "Name", "Department", "Role", "Status"]
 
-  // 🔹 LOAD EMPLOYEES FROM BACKEND
+  // 🔹 LOAD EMPLOYEES (GET)
   const loadEmployees = () => {
     getEmployees()
       .then(res => setEmployees(res.data))
       .catch(err => console.error(err))
   }
 
-  // 🔹 INITIAL FETCH (GET)
   useEffect(() => {
     loadEmployees()
   }, [])
@@ -35,6 +43,24 @@ export default function Employees() {
     try {
       await addEmployee(data)
       setOpen(false)
+      loadEmployees()
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  // 🔹 EDIT CLICK
+  const handleEditClick = (emp) => {
+    setSelected(emp)
+    setEditOpen(true)
+  }
+
+  // 🔹 UPDATE EMPLOYEE (PUT)
+  const handleUpdateEmployee = async (data) => {
+    try {
+      await updateEmployee(selected._id, data)
+      setEditOpen(false)
+      setSelected(null)
       loadEmployees()
     } catch (err) {
       console.error(err)
@@ -77,12 +103,26 @@ export default function Employees() {
 
         </div>
 
-        <Table columns={columns} data={filtered} />
+        <Table
+          columns={columns}
+          data={filtered}
+          onEdit={handleEditClick}
+        />
       </Card>
 
       {/* ADD EMPLOYEE MODAL */}
       <Modal open={open} onClose={() => setOpen(false)} title="Add Employee">
         <AddEmployeeForm onSubmit={handleAddEmployee} />
+      </Modal>
+
+      {/* EDIT EMPLOYEE MODAL */}
+      <Modal open={editOpen} onClose={() => setEditOpen(false)} title="Edit Employee">
+        {selected && (
+          <EditEmployeeForm
+            initial={selected}
+            onSubmit={handleUpdateEmployee}
+          />
+        )}
       </Modal>
 
     </MainLayout>

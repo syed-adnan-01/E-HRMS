@@ -1,30 +1,41 @@
-import { Link } from "react-router-dom"
-
-export default function Table({ columns, data }) {
+export default function Table({ columns, data, onEdit }) {
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full border">
-        <thead className="bg-gray-100">
-          <tr>
-            {columns.map(c => (
-              <th key={c} className="p-2 border text-left">
-                {c}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((emp, idx) => (
-            <tr key={emp._id || idx}>
-              <td>{emp.employeeId}</td>
-              <td>{emp.name}</td>
-              <td>{emp.department}</td>
-              <td>{emp.role}</td>
-              <td>{emp.status}</td>
-            </tr>
+    <table className="min-w-full border">
+
+      <thead>
+        <tr>
+          {columns.map(col => (
+            <th key={col} className="p-2 border text-left">
+              {col}
+            </th>
           ))}
-        </tbody>
-      </table>
-    </div>
+          <th className="p-2 border">Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {data.map((emp) => (
+          <tr key={emp._id} className="border">
+
+            <td className="p-2">{emp.employeeId}</td>
+            <td className="p-2">{emp.name}</td>
+            <td className="p-2">{emp.department}</td>
+            <td className="p-2">{emp.role}</td>
+            <td className="p-2">{emp.status}</td>
+
+            <td className="p-2">
+              <button
+                onClick={() => onEdit(emp)}
+                className="text-blue-600 hover:underline"
+              >
+                Edit
+              </button>
+            </td>
+
+          </tr>
+        ))}
+      </tbody>
+
+    </table>
   )
 }
