@@ -13,17 +13,31 @@ export default function EditEmployeeForm({ initial, onSubmit }) {
     status: initial.status
   })
 
+  const [error, setError] = useState("")
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    onSubmit(form)
+    setError("")
+
+    try {
+      await onSubmit(form)
+    } catch (err) {
+      setError(err.response?.data?.message || "Something went wrong")
+    }
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+
+      {error && (
+        <div className="bg-red-100 text-red-700 p-2 rounded">
+          {error}
+        </div>
+      )}
 
       <Input
         name="employeeId"

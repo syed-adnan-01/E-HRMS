@@ -55,15 +55,12 @@ export default function Employees() {
 
   // 🔹 UPDATE EMPLOYEE (PUT)
   const handleUpdateEmployee = async (data) => {
-    try {
-      await updateEmployee(selected._id, data)
-      setEditOpen(false)
-      setSelected(null)
-      loadEmployees()
-    } catch (err) {
-      console.error(err)
-    }
-  }
+    await updateEmployee(selected._id, data)
+    setEditOpen(false)
+    setSelected(null)
+    loadEmployees()
+}
+
 
   // 🔹 DELETE EMPLOYEE (DELETE)
   const handleDeleteEmployee = async (id) => {
