@@ -41,14 +41,11 @@ export default function Employees() {
 
   // 🔹 ADD EMPLOYEE (POST)
   const handleAddEmployee = async (data) => {
-    try {
-      await addEmployee(data)
-      setOpen(false)
-      loadEmployees()
-    } catch (err) {
-      console.error(err)
-    }
+    await addEmployee(data)
+    setOpen(false)
+    loadEmployees()
   }
+
 
   // 🔹 EDIT CLICK
   const handleEditClick = (emp) => {

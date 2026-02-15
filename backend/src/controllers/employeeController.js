@@ -5,9 +5,26 @@ export const createEmployee = async (req, res) => {
     const employee = await Employee.create(req.body)
     res.status(201).json(employee)
   } catch (error) {
-    res.status(400).json({ message: error.message })
+
+    // Duplicate Key Error
+    if (error.code === 11000) {
+      return res.status(400).json({
+        message: `${Object.keys(error.keyValue)} already exists`,
+      })
+    }
+
+    // Validation Errors
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map(
+        val => val.message
+      )
+      return res.status(400).json({ message: messages.join(", ") })
+    }
+
+    res.status(500).json({ message: error.message })
   }
 }
+
 
 export const getEmployees = async (req, res) => {
   const employees = await Employee.find().sort({ employeeId: 1 })
