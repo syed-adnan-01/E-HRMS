@@ -12,7 +12,8 @@ import EditEmployeeForm from "../../components/hr/EditEmployeeForm"
 import {
   getEmployees,
   addEmployee,
-  updateEmployee
+  updateEmployee,
+  deleteEmployee
 } from "../../api/employeeApi"
 
 export default function Employees() {
@@ -67,6 +68,17 @@ export default function Employees() {
     }
   }
 
+  // 🔹 DELETE EMPLOYEE (DELETE)
+  const handleDeleteEmployee = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this employee?")) return
+    try {
+      await deleteEmployee(id)
+      loadEmployees()
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
   const filtered = employees.filter(emp =>
     emp.name.toLowerCase().includes(search.toLowerCase()) &&
     (department ? emp.department === department : true)
@@ -107,6 +119,7 @@ export default function Employees() {
           columns={columns}
           data={filtered}
           onEdit={handleEditClick}
+          onDelete={handleDeleteEmployee}
         />
       </Card>
 

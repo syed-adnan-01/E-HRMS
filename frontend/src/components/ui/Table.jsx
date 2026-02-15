@@ -1,4 +1,4 @@
-export default function Table({ columns, data, onEdit }) {
+export default function Table({ columns, data, onEdit, onDelete }) {
   return (
     <table className="min-w-full border">
 
@@ -23,13 +23,22 @@ export default function Table({ columns, data, onEdit }) {
             <td className="p-2">{emp.role}</td>
             <td className="p-2">{emp.status}</td>
 
-            <td className="p-2">
+            <td className="p-2 space-x-3">
+
               <button
                 onClick={() => onEdit(emp)}
                 className="text-blue-600 hover:underline"
               >
                 Edit
               </button>
+
+              <button
+                onClick={() => onDelete(emp._id)}
+                className="text-red-600 hover:underline"
+              >
+                Delete
+              </button>
+
             </td>
 
           </tr>
