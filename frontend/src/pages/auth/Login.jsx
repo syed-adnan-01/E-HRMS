@@ -6,7 +6,7 @@ import Select from "../../components/ui/Select"
 
 export default function Login() {
   const [username, setUsername] = useState("")
-  const [role, setRole] = useState("HR")
+  const [role, setRole] = useState("ADMIN")
   const { login } = useAuth()
   const navigate = useNavigate()
 
