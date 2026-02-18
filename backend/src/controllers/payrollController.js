@@ -6,7 +6,8 @@ export const createPayroll = async (req, res) => {
 
     const { employee, month, basicSalary, allowances, deductions } = req.body
 
-    const netSalary = basicSalary + allowances - deductions
+    const netSalary = Number(basicSalary) + Number(allowances) - Number(deductions)
+
 
     const payroll = await Payroll.create({
       employee,
@@ -40,7 +41,7 @@ export const updatePayroll = async (req, res) => {
 
   const { basicSalary, allowances, deductions } = req.body
 
-  const netSalary = basicSalary + allowances - deductions
+  const netSalary = Number(basicSalary) + Number(allowances) - Number(deductions)
 
   const updated = await Payroll.findByIdAndUpdate(
     req.params.id,
