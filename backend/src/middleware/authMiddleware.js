@@ -2,31 +2,21 @@ import jwt from "jsonwebtoken"
 
 export const protect = (req, res, next) => {
 
-  let token
+  const token = req.headers.authorization?.split(" ")[1]
 
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer")
-  ) {
+  if (!token)
+    return res.status(401).json({ message: "No Token" })
 
-    try {
+  try {
 
-      token = req.headers.authorization.split(" ")[1]
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
-      const decoded = jwt.verify(
-        token,
-        process.env.JWT_SECRET
-      )
+    req.user = decoded
 
-      req.user = decoded
+    next()
 
-      next()
+  } catch {
 
-    } catch (error) {
-      res.status(401).json({ message: "Not authorized" })
-    }
-
-  } else {
-    res.status(401).json({ message: "No token provided" })
+    res.status(401).json({ message: "Invalid Token" })
   }
 }

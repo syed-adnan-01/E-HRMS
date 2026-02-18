@@ -10,6 +10,9 @@ app.use("/api/auth", authRoutes)
 import attendanceRoutes from "./routes/attendanceRoutes.js"
 app.use("/api/attendance", attendanceRoutes)
 
+import payrollRoutes from "./routes/payrollRoutes.js"
+app.use("/api/payroll", payrollRoutes)
+
 const PORT = process.env.PORT || 5000
 
 connectDB()
