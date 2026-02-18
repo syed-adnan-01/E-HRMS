@@ -7,6 +7,9 @@ import { connectDB } from "./config/db.js"
 import authRoutes from "./routes/authRoutes.js"
 app.use("/api/auth", authRoutes)
 
+import attendanceRoutes from "./routes/attendanceRoutes.js"
+app.use("/api/attendance", attendanceRoutes)
+
 const PORT = process.env.PORT || 5000
 
 connectDB()
