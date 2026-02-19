@@ -1,14 +1,36 @@
 export function exportToCsv(filename, rows) {
-  const headers = Object.keys(rows[0]).join(",")
-  const values = rows.map(r => Object.values(r).join(",")).join("\n")
+  if (!rows.length) return
 
-  const blob = new Blob([headers + "\n" + values], { type: "text/csv" })
-  const url = window.URL.createObjectURL(blob)
+  const separator = ","
+  const keys = Object.keys(rows[0])
 
-  const a = document.createElement("a")
-  a.href = url
-  a.download = filename
-  a.click()
+  const csvContent =
+    keys.join(separator) +
+    "\n" +
+    rows
+      .map(row =>
+        keys
+          .map(k => {
+            let cell = row[k] === null || row[k] === undefined ? "" : row[k]
+            cell = cell instanceof Date ? cell.toLocaleString() : cell.toString()
+            if (cell.search(/("|,|\n)/g) >= 0)
+              cell = `"${cell.replace(/"/g, '""')}"`
+            return cell
+          })
+          .join(separator)
+      )
+      .join("\n")
 
-  window.URL.revokeObjectURL(url)
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
+  const link = document.createElement("a")
+
+  if (link.download !== undefined) {
+    const url = URL.createObjectURL(blob)
+    link.setAttribute("href", url)
+    link.setAttribute("download", filename)
+    link.style.visibility = "hidden"
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
 }
