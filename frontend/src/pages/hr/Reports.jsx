@@ -64,7 +64,7 @@ export default function Reports() {
 
       <Card>
 
-        <div className="flex justify-between mb-4">
+        <div className="flex justify-between mb-10 space-x-80">
 
           <Select
             value={type}
@@ -81,12 +81,12 @@ export default function Reports() {
               px-3
               text-sm
               font-medium
-              text-green-700
+              text-black
               border
               border-green-500
               rounded-md
-              bg-green-50
-              hover:bg-green-100
+              bg-green-400
+              hover:bg-green-200
               hover:border-green-600
               transition
               whitespace-nowrap
