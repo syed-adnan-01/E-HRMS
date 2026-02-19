@@ -1,9 +1,10 @@
 import { useState } from "react"
-import MainLayout from "../layouts/MainLayout"
-import Card from "../components/ui/Card"
-import Select from "../components/ui/Select"
-import { employees } from "../data/employees"
-import { exportToCsv } from "../utils/exportCsv"
+import MainLayout from "../../layouts/MainLayout"
+import Card from "../../components/ui/Card"
+import Select from "../../components/ui/Select"
+import { employees } from "../../data/employees"
+import { exportToCsv } from "../../utils/exportCsv"
+
 
 export default function Reports() {
   const [department, setDepartment] = useState("")

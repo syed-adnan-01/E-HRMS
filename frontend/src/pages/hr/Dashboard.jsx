@@ -1,9 +1,10 @@
-import MainLayout from "../layouts/MainLayout"
-import KpiCard from "../components/dashboard/KpiCard"
-import AttendanceSummary from "../components/dashboard/AttendanceSummary"
-import EmployeeStatus from "../components/dashboard/EmployeeStatus"
-import HeadcountChart from "../components/charts/HeadcountChart"
-import AttendanceChart from "../components/charts/AttendanceChart"
+import MainLayout from "../../layouts/MainLayout"
+import KpiCard from "../../components/dashboard/KpiCard"
+import AttendanceSummary from "../../components/dashboard/AttendanceSummary"
+import EmployeeStatus from "../../components/dashboard/EmployeeStatus"
+import HeadcountChart from "../../components/charts/HeadcountChart"
+import AttendanceChart from "../../components/charts/AttendanceChart"
+
 
 export default function Dashboard() {
   return (

@@ -1,59 +1,76 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+
 import { AuthProvider } from "./context/AuthContext"
 import ProtectedRoute from "./routes/ProtectedRoute"
 
-import Dashboard from "./pages/Dashboard"
-import Employees from "./pages/hr/Employees"
-import EmployeeProfile from "./pages/hr/EmployeeProfile"
-import Attendance from "./pages/hr/Attendance"
-import Payroll from "./pages/hr/Payroll"
-import Reports from "./pages/Reports"
 import Login from "./pages/auth/Login"
 
+import Dashboard from "./pages/hr/Dashboard"
+import Employees from "./pages/hr/Employees"
+import Attendance from "./pages/hr/Attendance"
+import Payroll from "./pages/hr/Payroll"
+import Reports from "./pages/hr/Reports"
+
 export default function App() {
+
   return (
     <AuthProvider>
-      <BrowserRouter>
+
+      <Router>
+
         <Routes>
+
           <Route path="/login" element={<Login />} />
 
-          <Route path="/" element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          } />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
 
-          <Route path="/employees" element={
-            <ProtectedRoute roles={["ADMIN", "HR"]}>
-              <Employees />
-            </ProtectedRoute>
-          } />
+          <Route
+            path="/employees"
+            element={
+              <ProtectedRoute>
+                <Employees />
+              </ProtectedRoute>
+            }
+          />
 
-          <Route path="/employees/:id" element={
-            <ProtectedRoute roles={["ADMIN", "HR", "MANAGER"]}>
-              <EmployeeProfile />
-            </ProtectedRoute>
-          } />
+          <Route
+            path="/attendance"
+            element={
+              <ProtectedRoute>
+                <Attendance />
+              </ProtectedRoute>
+            }
+          />
 
-          <Route path="/attendance" element={
-            <ProtectedRoute roles={["ADMIN", "HR", "MANAGER"]}>
-              <Attendance />
-            </ProtectedRoute>
-          } />
+          <Route
+            path="/payroll"
+            element={
+              <ProtectedRoute>
+                <Payroll />
+              </ProtectedRoute>
+            }
+          />
 
-          <Route path="/payroll" element={
-            <ProtectedRoute roles={["ADMIN", "HR"]}>
-              <Payroll />
-            </ProtectedRoute>
-          } />
+          <Route
+            path="/reports"
+            element={
+              <ProtectedRoute>
+                <Reports />
+              </ProtectedRoute>
+            }
+          />
 
-          <Route path="/reports" element={
-            <ProtectedRoute roles={["ADMIN", "HR"]}>
-              <Reports />
-            </ProtectedRoute>
-          } />
         </Routes>
-      </BrowserRouter>
+
+      </Router>
+
     </AuthProvider>
   )
 }
