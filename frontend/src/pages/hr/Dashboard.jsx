@@ -1,31 +1,50 @@
+/* eslint-disable react-hooks/immutability */
+import { useEffect, useState } from "react"
 import MainLayout from "../../layouts/MainLayout"
 import KpiCard from "../../components/dashboard/KpiCard"
 import AttendanceSummary from "../../components/dashboard/AttendanceSummary"
 import EmployeeStatus from "../../components/dashboard/EmployeeStatus"
 import HeadcountChart from "../../components/charts/HeadcountChart"
 import AttendanceChart from "../../components/charts/AttendanceChart"
-
+import { getDashboardStats } from "../../api/dashboardApi"
 
 export default function Dashboard() {
+  const [stats, setStats] = useState({
+    totalEmployees: 0,
+    presentToday: 0,
+    absentToday: 0,
+    monthlyPayroll: 0,
+  })
+
+  useEffect(() => {
+    fetchStats()
+  }, [])
+
+  async function fetchStats() {
+    try {
+      const res = await getDashboardStats()
+      setStats(res.data)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   return (
     <MainLayout>
       <h1 className="text-2xl font-semibold mb-6">Dashboard</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <KpiCard title="Total Employees" value="50" />
-        <KpiCard title="Active Employees" value="45" />
-        <KpiCard title="Departments" value="3" />
-        <KpiCard title="Open Positions" value="3" />
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <KpiCard title="Total Employees" value={stats.totalEmployees} />
+        <KpiCard title="Present Today" value={stats.presentToday} />
+        <KpiCard title="Absent Today" value={stats.absentToday} />
+        <KpiCard title="Monthly Payroll" value={`₹ ${stats.monthlyPayroll}`} />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <HeadcountChart />
-        <AttendanceChart />
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <AttendanceSummary />
         <EmployeeStatus />
+        <HeadcountChart />
+        <AttendanceChart />
       </div>
     </MainLayout>
   )
