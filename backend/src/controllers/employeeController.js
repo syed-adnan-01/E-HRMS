@@ -1,4 +1,6 @@
 import Employee from "../models/Employee.js"
+import Attendance from "../models/attendanceModel.js"
+import Payroll from "../models/Payroll.js"
 
 export const createEmployee = async (req, res) => {
   try {
@@ -59,14 +61,20 @@ export const updateEmployee = async (req, res) => {
 
 export const deleteEmployee = async (req, res) => {
   try {
-    const employee = await Employee.findByIdAndDelete(req.params.id)
+    const { id } = req.params
 
-    if (!employee) {
-      return res.status(404).json({ message: "Employee not found" })
-    }
+    // delete employee
+    await Employee.findByIdAndDelete(id)
 
-    res.json({ message: "Employee deleted successfully" })
-  } catch (error) {
-    res.status(400).json({ message: error.message })
+    // delete attendance linked to employee
+    await Attendance.deleteMany({ employee: id })
+
+    // delete payroll linked to employee
+    await Payroll.deleteMany({ employee: id })
+
+    res.json({ message: "Employee and related records deleted" })
+
+  } catch (err) {
+    res.status(500).json({ message: err.message })
   }
 }
