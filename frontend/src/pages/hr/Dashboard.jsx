@@ -4,8 +4,6 @@ import MainLayout from "../../layouts/MainLayout"
 import KpiCard from "../../components/dashboard/KpiCard"
 import AttendanceSummary from "../../components/dashboard/AttendanceSummary"
 import EmployeeStatus from "../../components/dashboard/EmployeeStatus"
-import HeadcountChart from "../../components/charts/HeadcountChart"
-import AttendanceChart from "../../components/charts/AttendanceChart"
 import { getDashboardStats } from "../../api/dashboardApi"
 
 
@@ -44,8 +42,6 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <AttendanceSummary />
         <EmployeeStatus />
-        <HeadcountChart />
-        <AttendanceChart />
       </div>
     </MainLayout>
   )

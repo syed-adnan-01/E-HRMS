@@ -20,9 +20,3 @@ export const getAttendanceReport = () =>
 // Payroll Report
 export const getPayrollReport = () =>
   API.get("/reports/payroll")
-
-export const getHeadcountChart = () =>
-  axios.get("/reports/headcount-chart")
-
-export const getAttendanceChart = () =>
-  axios.get("/reports/attendance-chart")
