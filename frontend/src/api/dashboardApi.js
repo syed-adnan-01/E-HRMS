@@ -14,3 +14,5 @@ API.interceptors.request.use((req) => {
 })
 
 export const getDashboardStats = () => API.get("/reports/dashboard")
+export const getAttendanceSummary = () => API.get("/reports/attendance-summary")
+export const getEmployeeStatus = () => API.get("/reports/employee-status")

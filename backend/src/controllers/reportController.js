@@ -12,8 +12,6 @@ export const getAttendanceReport = async (req, res) => {
   res.json(records)
 }
 
-
-
 // GET PAYROLL REPORT
 export const getPayrollReport = async (req, res) => {
 
@@ -83,3 +81,104 @@ export const getDashboardStats = async (req, res) => {
   }
 }
 
+// GET ATTENDANCE SUMMARY
+export const getAttendanceSummary = async (req, res) => {
+  try {
+    const summary = await Attendance.aggregate([
+      {
+        $match: {
+          date: {
+            $gte: new Date(new Date().setHours(0, 0, 0, 0)),
+            $lte: new Date(new Date().setHours(23, 59, 59, 999))
+          }
+        }
+      },
+      {
+        $group: {
+          _id: "$status",
+          count: { $sum: 1 }
+        }
+      }
+    ])
+
+    res.json(summary)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+}
+
+// GET EMPLOYEE STATUS
+export const getEmployeeStatus = async (req, res) => {
+  try {
+    const active = await Employee.countDocuments({
+      status: "Active"
+    })
+
+    const inactive = await Employee.countDocuments({
+      status: "Inactive"
+    })
+
+    res.json({
+      active,
+      inactive
+    })
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+}
+
+// GET HEADCOUNT & ATTENDANCE CHART DATA
+export const getHeadcountChart = async (req, res) => {
+  try {
+
+    const active = await Employee.countDocuments({
+      status: "Active"
+    })
+
+    const inactive = await Employee.countDocuments({
+      status: "Inactive"
+    })
+
+    res.json({
+      labels: ["Active","Inactive"],
+      data: [active,inactive]
+    })
+
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+}
+
+export const getAttendanceChart = async (req, res) => {
+  try {
+
+    const today = new Date()
+    today.setHours(0,0,0,0)
+
+    const tomorrow = new Date(today)
+    tomorrow.setDate(tomorrow.getDate() + 1)
+
+    const present = await Attendance.countDocuments({
+      date: { $gte: today, $lt: tomorrow },
+      status: "Present"
+    })
+
+    const absent = await Attendance.countDocuments({
+      date: { $gte: today, $lt: tomorrow },
+      status: "Absent"
+    })
+
+    const leave = await Attendance.countDocuments({
+      date: { $gte: today, $lt: tomorrow },
+      status: "Leave"
+    })
+
+    res.json({
+      labels: ["Present","Absent","Leave"],
+      data: [present,absent,leave]
+    })
+
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+}

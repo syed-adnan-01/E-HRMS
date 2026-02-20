@@ -8,6 +8,7 @@ import HeadcountChart from "../../components/charts/HeadcountChart"
 import AttendanceChart from "../../components/charts/AttendanceChart"
 import { getDashboardStats } from "../../api/dashboardApi"
 
+
 export default function Dashboard() {
   const [stats, setStats] = useState({
     totalEmployees: 0,
