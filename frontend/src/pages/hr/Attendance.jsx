@@ -4,12 +4,7 @@ import MainLayout from "../../layouts/MainLayout"
 import Card from "../../components/ui/Card"
 import Modal from "../../components/ui/Modal"
 
-import {
-  getAttendance,
-  markAttendance,
-  updateAttendance,
-  deleteAttendance
-} from "../../api/attendanceApi"
+import * as attendanceApi from "../../api/attendanceApi"
 
 import { getEmployees } from "../../api/employeeApi"
 
@@ -37,7 +32,7 @@ export default function Attendance() {
   }, [])
 
   async function fetchAttendance() {
-    const res = await getAttendance()
+    const res = await attendanceApi.getAttendance()
     setAttendance(res.data)
   }
 
@@ -52,7 +47,7 @@ export default function Attendance() {
 
   async function handleMark() {
 
-    await markAttendance({
+    await attendanceApi.markAttendance({
       employee,
       date,
       status
@@ -76,7 +71,7 @@ export default function Attendance() {
 
   async function handleUpdateAttendance(updated) {
 
-    await updateAttendance(selected._id, updated)
+    await attendanceApi.updateAttendance(selected._id, updated)
 
     await fetchAttendance()
 
@@ -89,7 +84,7 @@ export default function Attendance() {
 
   async function handleDelete(id) {
 
-    await deleteAttendance(id)
+    await attendanceApi.deleteAttendance(id)
 
     await fetchAttendance()
   }
