@@ -15,7 +15,11 @@ import reportRoutes from "./routes/reportRoutes.js"
 // ✅ CORS (Render + Vercel compatible)
 app.use(
   cors({
-    origin: "*",
+    origin: [
+      "http://localhost:5173",
+      "https://e-hrms-five.vercel.app"
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
 )
