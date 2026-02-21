@@ -1,13 +1,6 @@
-import api from "./axios"
+import API from "./axios"
 
-export const getAttendance = () =>
-  api.get("/attendance")
-
-export const markAttendance = (data) =>
-  api.post("/attendance", data)
-
-export const updateAttendance = (id, data) =>
-  api.put(`/attendance/${id}`, data)
-
-export const deleteAttendance = (id) =>
-  api.delete(`/attendance/${id}`)
+export const getAttendance = () => API.get("/attendance")
+export const addAttendance = (data) => API.post("/attendance", data)
+export const updateAttendance = (id, data) => API.put(`/attendance/${id}`, data)
+export const deleteAttendance = (id) => API.delete(`/attendance/${id}`)

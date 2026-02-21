@@ -1,12 +1,6 @@
-import api from "./axios"
+import API from "./axios"
 
-export const getEmployees = () => api.get("/employees")
-
-export const addEmployee = (data) =>
-  api.post("/employees", data)
-
-export const updateEmployee = (id, data) =>
-  api.put(`/employees/${id}`, data)
-
-export const deleteEmployee = (id) =>
-  api.delete(`/employees/${id}`)
+export const getEmployees = () => API.get("/employees")
+export const addEmployee = (data) => API.post("/employees", data)
+export const updateEmployee = (id, data) => API.put(`/employees/${id}`, data)
+export const deleteEmployee = (id) => API.delete(`/employees/${id}`)

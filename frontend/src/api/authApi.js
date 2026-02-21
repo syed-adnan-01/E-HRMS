@@ -1,4 +1,4 @@
-import api from "./axios"
+import API from "./axios"
 
 export const loginUser = (data) =>
-  api.post("/auth/login", data)
+  API.post("/auth/login", data)
