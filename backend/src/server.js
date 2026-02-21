@@ -1,9 +1,16 @@
 import dotenv from "dotenv"
 dotenv.config()
 
-import app from "./app.js"
+import express from "express"
+import app from "./app.js"              // ✅ IMPORT APP FIRST
 import cors from "cors"
 import { connectDB } from "./config/db.js"
+
+// ROUTES
+import authRoutes from "./routes/authRoutes.js"
+import attendanceRoutes from "./routes/attendanceRoutes.js"
+import payrollRoutes from "./routes/payrollRoutes.js"
+import reportRoutes from "./routes/reportRoutes.js"
 
 // ✅ CORS (Render + Vercel compatible)
 app.use(
@@ -13,16 +20,14 @@ app.use(
   })
 )
 
-// ROUTES
-import authRoutes from "./routes/authRoutes.js"
-import attendanceRoutes from "./routes/attendanceRoutes.js"
-import payrollRoutes from "./routes/payrollRoutes.js"
-import reportRoutes from "./routes/reportRoutes.js"
+app.use(express.json())
 
+// ✅ ROUTE MOUNTING
 app.use("/api/auth", authRoutes)
 app.use("/api/attendance", attendanceRoutes)
 app.use("/api/payroll", payrollRoutes)
 app.use("/api/reports", reportRoutes)
+app.use(express.json())
 
 const PORT = process.env.PORT || 5000
 
