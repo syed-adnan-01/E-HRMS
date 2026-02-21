@@ -1,13 +1,17 @@
-import API from "./axios"
+import axios from "axios"
 
-export const getAttendanceReport = () =>
-  API.get("/reports/attendance")
+const API = axios.create({
+baseURL: import.meta.env.VITE_API_BASE_URL + "/reports"
+})
 
-export const getPayrollReport = () =>
-  API.get("/reports/payroll")
+API.interceptors.request.use(req => {
+const token = localStorage.getItem("token")
+if (token) req.headers.Authorization = `Bearer ${token}`
+return req
+})
 
-export const getDashboardStats = () =>
-  API.get("/reports/dashboard")
-
-export const getAttendanceSummary = () =>
-  API.get("/reports/attendance-summary")
+export const getAttendanceReport = () => API.get("/attendance")
+export const getPayrollReport = () => API.get("/payroll")
+export const getDashboardStats = () => API.get("/dashboard")
+export const getAttendanceSummary = () => API.get("/attendance-summary")
+export const getEmployeeStatus = () => API.get("/employee-status")
