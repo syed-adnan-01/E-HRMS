@@ -24,19 +24,20 @@ export default function Login() {
       })
 
       // Store JWT Token
-      localStorage.setItem("token", res.data.token)
-
+      localStorage.setItem("token", res.token || res.jwt || res)
+  
       // Store user role & name in AuthContext
       login({
-        role: res.data.role,
-        name: res.data.name
+        role: res.role,
+        name: res.name
       })
 
       // Redirect to Dashboard
       navigate("/")
 
     } catch (err) {
-      setError(err.response?.data?.message || "Login Failed")
+      setError(err.response?.data?.message || "Login Failed lavda kuch to gadbad heee")
+      console.error("Login error:", err)
     }
   }
 
