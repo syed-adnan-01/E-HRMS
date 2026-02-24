@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
-import Employee from './src/models/employeeModel.js'; // Verify actual model name before doing this.
+import Employee from './src/models/Employee.js';
 
 dotenv.config();
 
