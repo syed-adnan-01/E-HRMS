@@ -4,8 +4,10 @@ import employeeRoutes from "./routes/employeeRoutes.js"
 
 const app = express()
 
+const frontendUrl = process.env.FRONTEND_URL ? process.env.FRONTEND_URL.replace(/\/$/, "") : "http://localhost:5173";
+
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || "http://localhost:5173", // Use env var for Vercel, fallback to Vite default local
+  origin: [frontendUrl, `${frontendUrl}/`, "http://localhost:5173", "http://localhost:5001"],
   credentials: true,
 };
 app.use(cors(corsOptions))
