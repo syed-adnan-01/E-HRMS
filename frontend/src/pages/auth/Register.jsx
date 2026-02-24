@@ -99,7 +99,6 @@ export default function Register() {
                             <option value="ADMIN">Admin</option>
                             <option value="HR">HR</option>
                             <option value="MANAGER">Manager</option>
-                            <option value="EMPLOYEE">Employee</option>
                         </select>
                     </div>
                 </div>
