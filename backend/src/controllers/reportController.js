@@ -26,8 +26,8 @@ export const getPayrollReport = async (req, res) => {
 export const getDashboardStats = async (req, res) => {
   try {
 
-    // TOTAL EMPLOYEES
-    const totalEmployees = await Employee.countDocuments()
+    // TOTAL EMPLOYEES (ACTIVE ONLY)
+    const totalEmployees = await Employee.countDocuments({ status: 'Active' })
 
     // TODAY DATE RANGE
     const today = new Date()
@@ -140,8 +140,8 @@ export const getHeadcountChart = async (req, res) => {
     })
 
     res.json({
-      labels: ["Active","Inactive"],
-      data: [active,inactive]
+      labels: ["Active", "Inactive"],
+      data: [active, inactive]
     })
 
   } catch (err) {
@@ -153,7 +153,7 @@ export const getAttendanceChart = async (req, res) => {
   try {
 
     const today = new Date()
-    today.setHours(0,0,0,0)
+    today.setHours(0, 0, 0, 0)
 
     const tomorrow = new Date(today)
     tomorrow.setDate(tomorrow.getDate() + 1)
@@ -174,8 +174,8 @@ export const getAttendanceChart = async (req, res) => {
     })
 
     res.json({
-      labels: ["Present","Absent","Leave"],
-      data: [present,absent,leave]
+      labels: ["Present", "Absent", "Leave"],
+      data: [present, absent, leave]
     })
 
   } catch (err) {

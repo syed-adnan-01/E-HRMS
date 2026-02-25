@@ -4,10 +4,8 @@ import employeeRoutes from "./routes/employeeRoutes.js"
 
 const app = express()
 
-const frontendUrl = process.env.FRONTEND_URL ? process.env.FRONTEND_URL.replace(/\/$/, "") : "http://localhost:5173";
-
 const corsOptions = {
-  origin: [frontendUrl, `${frontendUrl}/`, "http://localhost:5173", "http://localhost:5001"],
+  origin: (origin, callback) => callback(null, origin || true),
   credentials: true,
 };
 app.use(cors(corsOptions))
