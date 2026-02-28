@@ -59,7 +59,7 @@ export default function Employees() {
     setEditOpen(false)
     setSelected(null)
     loadEmployees()
-}
+  }
 
 
   // 🔹 DELETE EMPLOYEE (DELETE)
@@ -109,12 +109,14 @@ export default function Employees() {
 
         </div>
 
-        <Table
-          columns={columns}
-          data={filtered}
-          onEdit={handleEditClick}
-          onDelete={handleDeleteEmployee}
-        />
+        <div className="overflow-x-auto">
+          <Table
+            columns={columns}
+            data={filtered}
+            onEdit={handleEditClick}
+            onDelete={handleDeleteEmployee}
+          />
+        </div>
       </Card>
 
       {/* ADD EMPLOYEE MODAL */}

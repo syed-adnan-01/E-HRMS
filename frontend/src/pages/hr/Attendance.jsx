@@ -149,65 +149,67 @@ export default function Attendance() {
 
         {/* TABLE */}
 
-        <table className="w-full text-left">
+        <div className="overflow-x-auto">
+          <table className="min-w-[600px] w-full text-left border-collapse">
 
-          <thead>
-            <tr className="border-b">
-              <th className="px-4 py-2">Employee ID</th>
-              <th className="px-4 py-2">Name</th>
-              <th className="px-4 py-2">Date</th>
-              <th className="px-4 py-2">Status</th>
-              <th className="px-4 py-2">Actions</th>
-            </tr>
-          </thead>
-
-          <tbody>
-
-            {attendance.map(item => (
-
-              <tr key={item._id} className="border-t">
-
-                <td className="px-4 py-2">
-                  {item.employee?.employeeId}
-                </td>
-
-                <td className="px-4 py-2">
-                  {item.employee?.name}
-                </td>
-
-                <td className="px-4 py-2">
-                  {new Date(item.date).toLocaleDateString()}
-                </td>
-
-                <td className="px-4 py-2">
-                  {item.status}
-                </td>
-
-                <td className="px-4 py-2 space-x-2">
-
-                  <button
-                    onClick={() => handleEdit(item)}
-                    className="text-blue-600"
-                  >
-                    Edit
-                  </button>
-
-                  <button
-                    onClick={() => handleDelete(item._id)}
-                    className="text-red-600"
-                  >
-                    Delete
-                  </button>
-
-                </td>
-
+            <thead>
+              <tr className="border-b">
+                <th className="px-4 py-2">Employee ID</th>
+                <th className="px-4 py-2">Name</th>
+                <th className="px-4 py-2">Date</th>
+                <th className="px-4 py-2">Status</th>
+                <th className="px-4 py-2">Actions</th>
               </tr>
+            </thead>
 
-            ))}
+            <tbody>
 
-          </tbody>
+              {attendance.map(item => (
 
-        </table>
+                <tr key={item._id} className="border-t">
+
+                  <td className="px-4 py-2">
+                    {item.employee?.employeeId}
+                  </td>
+
+                  <td className="px-4 py-2">
+                    {item.employee?.name}
+                  </td>
+
+                  <td className="px-4 py-2">
+                    {new Date(item.date).toLocaleDateString()}
+                  </td>
+
+                  <td className="px-4 py-2">
+                    {item.status}
+                  </td>
+
+                  <td className="px-4 py-2 space-x-2">
+
+                    <button
+                      onClick={() => handleEdit(item)}
+                      className="text-blue-600"
+                    >
+                      Edit
+                    </button>
+
+                    <button
+                      onClick={() => handleDelete(item._id)}
+                      className="text-red-600"
+                    >
+                      Delete
+                    </button>
+
+                  </td>
+
+                </tr>
+
+              ))}
+
+            </tbody>
+
+          </table>
+        </div>
 
       </Card>
 

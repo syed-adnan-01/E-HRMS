@@ -32,14 +32,14 @@ export default function Dashboard() {
     <MainLayout>
       <h1 className="text-2xl font-semibold mb-6">Dashboard</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <KpiCard title="Total Employees" value={stats.totalEmployees} />
         <KpiCard title="Present Today" value={stats.presentToday} />
         <KpiCard title="Absent Today" value={stats.absentToday} />
         <KpiCard title="Monthly Payroll" value={`₹ ${stats.monthlyPayroll}`} />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <AttendanceSummary />
         <EmployeeStatus />
       </div>

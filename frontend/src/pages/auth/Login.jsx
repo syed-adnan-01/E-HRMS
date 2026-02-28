@@ -45,7 +45,7 @@ export default function Login() {
 
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-8 rounded shadow-md w-96"
+        className="bg-white p-8 rounded shadow-md w-[90%] max-w-md"
       >
 
         <h2 className="text-2xl font-bold mb-6 text-center">
