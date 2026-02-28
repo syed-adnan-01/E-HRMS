@@ -112,7 +112,7 @@ export default function Attendance() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
 
           <select
-            className="border px-3 py-2 rounded"
+            className="w-full border px-3 py-2 rounded bg-white"
             onChange={e => setEmployee(e.target.value)}
           >
             <option>Select Employee</option>
@@ -124,13 +124,16 @@ export default function Attendance() {
           </select>
 
           <input
-            type="date"
-            className="border px-3 py-2 rounded"
+            type="text"
+            placeholder="Date (dd/mm/yyyy)"
+            className="w-full border px-3 py-2 rounded bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onFocus={(e) => (e.target.type = "date")}
+            onBlur={(e) => (!e.target.value ? (e.target.type = "text") : null)}
             onChange={e => setDate(e.target.value)}
           />
 
           <select
-            className="border px-3 py-2 rounded"
+            className="w-full border px-3 py-2 rounded bg-white"
             onChange={e => setStatus(e.target.value)}
           >
             <option>Present</option>
@@ -140,7 +143,7 @@ export default function Attendance() {
 
           <button
             onClick={handleMark}
-            className="bg-blue-600 text-white px-4 py-2 rounded"
+            className="w-full bg-blue-600 text-white px-4 py-2 rounded"
           >
             Mark
           </button>
