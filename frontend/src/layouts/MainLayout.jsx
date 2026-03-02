@@ -6,7 +6,7 @@ export default function MainLayout({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   return (
-    <div className="flex h-screen bg-gray-100 overflow-hidden relative">
+    <div className="flex h-screen bg-slate-950 overflow-hidden relative">
       <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
       <div className="flex flex-col flex-1 overflow-hidden">
         <Header toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />

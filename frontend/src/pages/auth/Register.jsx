@@ -37,28 +37,28 @@ export default function Register() {
     }
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-center min-h-screen bg-slate-950 selection:bg-blue-500/30 py-12 px-4 sm:px-6 lg:px-8">
             <form
                 onSubmit={handleSubmit}
-                className="bg-white p-8 rounded shadow-md w-full max-w-md"
+                className="bg-slate-900/80 backdrop-blur-md p-8 rounded-2xl border border-slate-800 shadow-[0_0_40px_rgba(59,130,246,0.1)] w-full max-w-md"
             >
-                <h2 className="text-3xl font-extrabold mb-6 text-center text-gray-900">
+                <h2 className="text-3xl font-extrabold mb-6 text-center text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">
                     Create an Account
                 </h2>
 
                 {error && (
-                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                    <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-xl relative mb-6" role="alert">
                         <span className="block sm:inline">{error}</span>
                     </div>
                 )}
 
-                <div className="space-y-4 mb-6">
+                <div className="space-y-4 mb-8">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                        <label className="block text-sm font-medium text-slate-300 mb-1.5 ml-1">Full Name</label>
                         <input
                             type="text"
                             placeholder="Full Name"
-                            className="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full bg-slate-950/50 border border-slate-700 text-slate-200 placeholder-slate-500 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             required
@@ -66,11 +66,11 @@ export default function Register() {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                        <label className="block text-sm font-medium text-slate-300 mb-1.5 ml-1">Email Address</label>
                         <input
                             type="email"
-                            placeholder="Email Output"
-                            className="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Email Address"
+                            className="w-full bg-slate-950/50 border border-slate-700 text-slate-200 placeholder-slate-500 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
@@ -78,11 +78,11 @@ export default function Register() {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <label className="block text-sm font-medium text-slate-300 mb-1.5 ml-1">Password</label>
                         <input
                             type="password"
                             placeholder="Password"
-                            className="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full bg-slate-950/50 border border-slate-700 text-slate-200 placeholder-slate-500 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
@@ -90,28 +90,29 @@ export default function Register() {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                        <label className="block text-sm font-medium text-slate-300 mb-1.5 ml-1">Role</label>
                         <select
-                            className="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full bg-slate-950/50 border border-slate-700 text-slate-200 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                             value={role}
                             onChange={(e) => setRole(e.target.value)}
                         >
                             <option value="ADMIN">Admin</option>
                             <option value="HR">HR</option>
                             <option value="MANAGER">Manager</option>
+                            <option value="EMPLOYEE">Employee</option>
                         </select>
                     </div>
                 </div>
 
                 <button
                     type="submit"
-                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+                    className="w-full bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-semibold py-3 flex justify-center rounded-xl hover:shadow-[0_0_20px_rgba(79,70,229,0.5)] transition-all transform hover:-translate-y-0.5"
                 >
                     Register
                 </button>
 
-                <div className="mt-4 text-center">
-                    <Link to="/login" className="text-sm text-blue-600 hover:text-blue-500">
+                <div className="mt-6 text-center">
+                    <Link to="/login" className="text-sm text-blue-400 hover:text-blue-300 transition-colors">
                         Already have an account? Login here.
                     </Link>
                 </div>

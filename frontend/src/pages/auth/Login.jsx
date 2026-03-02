@@ -33,7 +33,7 @@ export default function Login() {
       })
 
       // Redirect to Dashboard
-      navigate("/")
+      navigate("/dashboard")
 
     } catch (err) {
       setError(err.response?.data?.message || "Login Failed")
@@ -41,19 +41,19 @@ export default function Login() {
   }
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
+    <div className="flex items-center justify-center h-screen bg-slate-950 selection:bg-blue-500/30">
 
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-8 rounded shadow-md w-[90%] max-w-md"
+        className="bg-slate-900/80 backdrop-blur-md p-8 rounded-2xl border border-slate-800 shadow-[0_0_40px_rgba(59,130,246,0.1)] w-[90%] max-w-md"
       >
 
-        <h2 className="text-2xl font-bold mb-6 text-center">
+        <h2 className="text-2xl font-bold mb-6 text-center text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">
           Login to E-HRMS
         </h2>
 
         {error && (
-          <div className="bg-red-100 text-red-700 p-2 rounded mb-4">
+          <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-xl relative mb-6">
             {error}
           </div>
         )}
@@ -61,7 +61,7 @@ export default function Login() {
         <input
           type="email"
           placeholder="Email"
-          className="w-full border px-3 py-2 mb-4 rounded"
+          className="w-full bg-slate-950/50 border border-slate-700 text-slate-200 placeholder-slate-400 px-4 py-3 mb-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -70,7 +70,7 @@ export default function Login() {
         <input
           type="password"
           placeholder="Password"
-          className="w-full border px-3 py-2 mb-4 rounded"
+          className="w-full bg-slate-950/50 border border-slate-700 text-slate-200 placeholder-slate-400 px-4 py-3 mb-6 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
@@ -78,13 +78,13 @@ export default function Login() {
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+          className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-3 rounded-xl hover:shadow-[0_0_20px_rgba(59,130,246,0.5)] transition-all transform hover:-translate-y-0.5"
         >
           Login
         </button>
 
-        <div className="mt-4 text-center">
-          <Link to="/register" className="text-sm text-blue-600 hover:text-blue-500">
+        <div className="mt-6 text-center">
+          <Link to="/register" className="text-sm text-blue-400 hover:text-blue-300 transition-colors">
             Don't have an account? Register here.
           </Link>
         </div>

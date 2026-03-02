@@ -5,6 +5,7 @@ import ProtectedRoute from "./routes/ProtectedRoute"
 
 import Login from "./pages/auth/Login"
 import Register from "./pages/auth/Register"
+import LandingPage from "./pages/LandingPage"
 
 import Dashboard from "./pages/hr/Dashboard"
 import Employees from "./pages/hr/Employees"
@@ -24,8 +25,10 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
+          <Route path="/" element={<LandingPage />} />
+
           <Route
-            path="/"
+            path="/dashboard"
             element={
               <ProtectedRoute>
                 <Dashboard />
