@@ -124,11 +124,8 @@ export default function Attendance() {
           </select>
 
           <input
-            type="text"
-            placeholder="Date (dd/mm/yyyy)"
-            className="w-full bg-black/50 border border-white/10 text-white placeholder-gray-500 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
-            onFocus={(e) => (e.target.type = "date")}
-            onBlur={(e) => (!e.target.value ? (e.target.type = "text") : null)}
+            type="date"
+            className="w-full bg-black/50 border border-white/10 text-white placeholder-gray-500 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all [color-scheme:dark]"
             onChange={e => setDate(e.target.value)}
           />
 
