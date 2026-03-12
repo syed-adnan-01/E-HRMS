@@ -25,7 +25,7 @@ export default function Table({ columns, data, onEdit, onDelete }) {
               <td className="p-4 whitespace-nowrap">
                 <span className={`px-2.5 py-1 text-xs font-semibold rounded-full border ${
                    emp.status?.toLowerCase() === 'active' || emp.status?.toLowerCase() === 'present' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
-                   emp.status?.toLowerCase() === 'leave' || emp.status?.toLowerCase() === 'absent' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
+                   emp.status?.toLowerCase() === 'leave' || emp.status?.toLowerCase() === 'absent' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
                    'bg-gray-500/10 text-gray-400 border-gray-500/20'
                 }`}>
                    {emp.status || 'N/A'}
