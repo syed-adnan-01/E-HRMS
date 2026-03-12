@@ -41,16 +41,20 @@ export default function Login() {
   }
 
   return (
-    <div className="flex items-center justify-center h-screen bg-slate-950 selection:bg-blue-500/30">
+    <div className="flex items-center justify-center min-h-screen bg-black selection:bg-blue-500/30 relative overflow-hidden">
+      {/* Background Glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none"></div>
 
       <form
         onSubmit={handleSubmit}
-        className="bg-slate-900/80 backdrop-blur-md p-8 rounded-2xl border border-slate-800 shadow-[0_0_40px_rgba(59,130,246,0.1)] w-[90%] max-w-md"
+        className="bg-white/[0.03] backdrop-blur-xl p-8 rounded-3xl border border-white/10 shadow-2xl w-[90%] max-w-md relative z-10"
       >
-
-        <h2 className="text-2xl font-bold mb-6 text-center text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">
-          Login to E-HRMS
-        </h2>
+        <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-white tracking-tight mb-2">
+            Welcome Back
+            </h2>
+            <p className="text-gray-400 text-sm">Login to WorkSphere</p>
+        </div>
 
         {error && (
           <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-xl relative mb-6">
@@ -60,8 +64,8 @@ export default function Login() {
 
         <input
           type="email"
-          placeholder="Email"
-          className="w-full bg-slate-950/50 border border-slate-700 text-slate-200 placeholder-slate-400 px-4 py-3 mb-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+          placeholder="Email address"
+          className="w-full bg-black/50 border border-white/10 text-white placeholder-gray-500 px-4 py-3.5 mb-4 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -70,7 +74,7 @@ export default function Login() {
         <input
           type="password"
           placeholder="Password"
-          className="w-full bg-slate-950/50 border border-slate-700 text-slate-200 placeholder-slate-400 px-4 py-3 mb-6 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+          className="w-full bg-black/50 border border-white/10 text-white placeholder-gray-500 px-4 py-3.5 mb-6 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
@@ -78,14 +82,14 @@ export default function Login() {
 
         <button
           type="submit"
-          className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-3 rounded-xl hover:shadow-[0_0_20px_rgba(59,130,246,0.5)] transition-all transform hover:-translate-y-0.5"
+          className="w-full bg-blue-600 text-white font-semibold py-3.5 rounded-xl hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] transition-all transform hover:-translate-y-0.5"
         >
-          Login
+          Sign In
         </button>
 
-        <div className="mt-6 text-center">
-          <Link to="/register" className="text-sm text-blue-400 hover:text-blue-300 transition-colors">
-            Don't have an account? Register here.
+        <div className="mt-8 text-center">
+          <Link to="/register" className="text-sm text-gray-400 hover:text-white transition-colors">
+            Don't have an account? <span className="text-blue-400">Register here</span>
           </Link>
         </div>
 

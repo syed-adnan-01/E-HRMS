@@ -28,7 +28,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
           }`}
       >
         <div className="p-6 font-bold text-xl border-b border-slate-800 text-white flex justify-between items-center">
-          E-HRMS
+          WorkSphere
           <button onClick={() => setIsOpen(false)} className="md:hidden text-slate-500 hover:text-white transition-colors">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
           </button>

@@ -37,14 +37,20 @@ export default function Register() {
     }
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-slate-950 selection:bg-blue-500/30 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-center min-h-screen bg-black selection:bg-blue-500/30 relative overflow-hidden py-12 px-4 sm:px-6 lg:px-8">
+            {/* Background Glow */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none"></div>
+
             <form
                 onSubmit={handleSubmit}
-                className="bg-slate-900/80 backdrop-blur-md p-8 rounded-2xl border border-slate-800 shadow-[0_0_40px_rgba(59,130,246,0.1)] w-full max-w-md"
+                className="bg-white/[0.03] backdrop-blur-xl p-8 rounded-3xl border border-white/10 shadow-2xl w-full max-w-md relative z-10"
             >
-                <h2 className="text-3xl font-extrabold mb-6 text-center text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">
-                    Create an Account
-                </h2>
+                <div className="text-center mb-8">
+                    <h2 className="text-3xl font-bold text-white tracking-tight mb-2">
+                        Create an Account
+                    </h2>
+                    <p className="text-gray-400 text-sm">Join WorkSphere today</p>
+                </div>
 
                 {error && (
                     <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-xl relative mb-6" role="alert">
@@ -54,11 +60,11 @@ export default function Register() {
 
                 <div className="space-y-4 mb-8">
                     <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-1.5 ml-1">Full Name</label>
+                        <label className="block text-sm font-medium text-gray-400 mb-1.5 ml-1">Full Name</label>
                         <input
                             type="text"
                             placeholder="Full Name"
-                            className="w-full bg-slate-950/50 border border-slate-700 text-slate-200 placeholder-slate-500 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                            className="w-full bg-black/50 border border-white/10 text-white placeholder-gray-500 px-4 py-3.5 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             required
@@ -66,11 +72,11 @@ export default function Register() {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-1.5 ml-1">Email Address</label>
+                        <label className="block text-sm font-medium text-gray-400 mb-1.5 ml-1">Email Address</label>
                         <input
                             type="email"
                             placeholder="Email Address"
-                            className="w-full bg-slate-950/50 border border-slate-700 text-slate-200 placeholder-slate-500 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                            className="w-full bg-black/50 border border-white/10 text-white placeholder-gray-500 px-4 py-3.5 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
@@ -78,11 +84,11 @@ export default function Register() {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-1.5 ml-1">Password</label>
+                        <label className="block text-sm font-medium text-gray-400 mb-1.5 ml-1">Password</label>
                         <input
                             type="password"
                             placeholder="Password"
-                            className="w-full bg-slate-950/50 border border-slate-700 text-slate-200 placeholder-slate-500 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                            className="w-full bg-black/50 border border-white/10 text-white placeholder-gray-500 px-4 py-3.5 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
@@ -90,30 +96,30 @@ export default function Register() {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-1.5 ml-1">Role</label>
+                        <label className="block text-sm font-medium text-gray-400 mb-1.5 ml-1">Role</label>
                         <select
-                            className="w-full bg-slate-950/50 border border-slate-700 text-slate-200 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                            className="w-full bg-black/50 border border-white/10 text-white px-4 py-3.5 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all appearance-none"
                             value={role}
                             onChange={(e) => setRole(e.target.value)}
                         >
-                            <option value="ADMIN">Admin</option>
-                            <option value="HR">HR</option>
-                            <option value="MANAGER">Manager</option>
-                            <option value="EMPLOYEE">Employee</option>
+                            <option value="ADMIN" className="bg-black text-white">Admin</option>
+                            <option value="HR" className="bg-black text-white">HR</option>
+                            <option value="MANAGER" className="bg-black text-white">Manager</option>
+                            <option value="EMPLOYEE" className="bg-black text-white">Employee</option>
                         </select>
                     </div>
                 </div>
 
                 <button
                     type="submit"
-                    className="w-full bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-semibold py-3 flex justify-center rounded-xl hover:shadow-[0_0_20px_rgba(79,70,229,0.5)] transition-all transform hover:-translate-y-0.5"
+                    className="w-full bg-blue-600 text-white font-semibold py-3.5 flex justify-center rounded-xl hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] transition-all transform hover:-translate-y-0.5"
                 >
                     Register
                 </button>
 
-                <div className="mt-6 text-center">
-                    <Link to="/login" className="text-sm text-blue-400 hover:text-blue-300 transition-colors">
-                        Already have an account? Login here.
+                <div className="mt-8 text-center">
+                    <Link to="/login" className="text-sm text-gray-400 hover:text-white transition-colors">
+                        Already have an account? <span className="text-blue-400">Login here</span>
                     </Link>
                 </div>
             </form>

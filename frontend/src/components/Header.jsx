@@ -13,7 +13,7 @@ export default function Header({ toggleSidebar }) {
             </svg>
           </button>
         )}
-        <h2 className="text-lg font-semibold truncate max-w-[150px] sm:max-w-none">E-HRMS</h2>
+        <h2 className="text-lg font-semibold text-white truncate max-w-[150px] sm:max-w-none">WorkSphere</h2>
       </div>
 
       {user && (
