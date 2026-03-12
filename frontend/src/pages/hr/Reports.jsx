@@ -60,7 +60,7 @@ export default function Reports() {
   return (
     <MainLayout>
 
-      <h1 className="text-2xl font-semibold mb-6">Reports</h1>
+      <h1 className="text-3xl font-bold text-white mb-8 tracking-tight">Reports</h1>
 
       <Card>
 
@@ -97,57 +97,64 @@ export default function Reports() {
           
         </div>
 
-        <table className="w-full border">
+        <div className="w-full overflow-hidden rounded-xl border border-white/10">
+          <table className="min-w-full text-left border-collapse">
 
-          <thead className="bg-gray-100">
-            <tr>
-
-              <th className="border px-4 py-2">Employee ID</th>
-              <th className="border px-4 py-2">Name</th>
-
-              {type === "attendance" ? (
-                <>
-                  <th className="border px-4 py-2">Date</th>
-                  <th className="border px-4 py-2">Status</th>
-                </>
-              ) : (
-                <>
-                  <th className="border px-4 py-2">Month</th>
-                  <th className="border px-4 py-2">Net Salary</th>
-                </>
-              )}
-
-              <th className="border px-4 py-2">Actions</th>
-
-            </tr>
-          </thead>
-
-          <tbody>
-
-            {data.map((row, index) => (
-
-              <tr key={index}>
-
-                <td className="border px-4 py-2">{row.id}</td>
-                <td className="border px-4 py-2">{row.name}</td>
+            <thead className="bg-white/5 border-b border-white/10">
+              <tr>
+                <th className="p-4 text-gray-400 font-semibold text-sm tracking-wide">Employee ID</th>
+                <th className="p-4 text-gray-400 font-semibold text-sm tracking-wide">Name</th>
 
                 {type === "attendance" ? (
                   <>
-                    <td className="border px-4 py-2">{row.date}</td>
-                    <td className="border px-4 py-2">{row.status}</td>
+                    <th className="p-4 text-gray-400 font-semibold text-sm tracking-wide">Date</th>
+                    <th className="p-4 text-gray-400 font-semibold text-sm tracking-wide">Status</th>
                   </>
                 ) : (
                   <>
-                    <td className="border px-4 py-2">{row.month}</td>
-                    <td className="border px-4 py-2">{row.netSalary}</td>
+                    <th className="p-4 text-gray-400 font-semibold text-sm tracking-wide">Month</th>
+                    <th className="p-4 text-gray-400 font-semibold text-sm tracking-wide">Net Salary</th>
                   </>
                 )}
 
-                <td className="border px-4 py-2">
-                  <span className="text-blue-600 cursor-pointer mr-2">
+                <th className="p-4 text-gray-400 font-semibold text-sm tracking-wide">Actions</th>
+              </tr>
+            </thead>
+
+            <tbody className="divide-y divide-white/10 bg-white/[0.02]">
+
+            {data.map((row, index) => (
+
+              <tr key={index} className="hover:bg-white/5 transition-colors">
+
+                <td className="p-4 text-gray-300 font-medium whitespace-nowrap">{row.id}</td>
+                <td className="p-4 text-gray-300 whitespace-nowrap">{row.name}</td>
+
+                {type === "attendance" ? (
+                  <>
+                    <td className="p-4 text-gray-400 whitespace-nowrap">{row.date}</td>
+                    <td className="p-4 text-gray-400 whitespace-nowrap">
+                        <span className={`px-2.5 py-1 text-xs font-semibold rounded-full border ${
+                        row.status?.toLowerCase() === 'active' || row.status?.toLowerCase() === 'present' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
+                        row.status?.toLowerCase() === 'leave' || row.status?.toLowerCase() === 'absent' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
+                        'bg-gray-500/10 text-gray-400 border-gray-500/20'
+                        }`}>
+                        {row.status || 'N/A'}
+                        </span>
+                    </td>
+                  </>
+                ) : (
+                  <>
+                    <td className="p-4 text-gray-400 whitespace-nowrap">{row.month}</td>
+                    <td className="p-4 text-gray-400 whitespace-nowrap">{row.netSalary}</td>
+                  </>
+                )}
+
+                <td className="p-4 space-x-3 whitespace-nowrap">
+                  <span className="text-blue-400 hover:text-blue-300 transition-colors font-medium text-sm cursor-pointer mr-2">
                     Edit
                   </span>
-                  <span className="text-red-600 cursor-pointer">
+                  <span className="text-red-400 hover:text-red-300 transition-colors font-medium text-sm cursor-pointer">
                     Delete
                   </span>
                 </td>
@@ -158,7 +165,8 @@ export default function Reports() {
 
           </tbody>
 
-        </table>
+          </table>
+        </div>
 
       </Card>
 

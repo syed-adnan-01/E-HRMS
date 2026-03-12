@@ -36,30 +36,30 @@ export default function AttendanceSummary() {
 
   return (
     <Card>
-      <h2 className="text-lg font-semibold mb-4">
+      <h2 className="text-xl font-bold text-white mb-6 tracking-tight">
         Today's Attendance
       </h2>
 
       <div className="grid grid-cols-3 gap-4 text-center">
-        <div>
-          <p className="text-green-600 font-semibold">
+        <div className="p-4 rounded-xl bg-white/5 border border-white/5 hover:border-emerald-500/30 transition-colors">
+          <p className="text-emerald-400 font-medium text-sm mb-1 uppercase tracking-wider">
             Present
           </p>
-          <p className="text-xl">{present}</p>
+          <p className="text-3xl font-bold text-white">{present}</p>
         </div>
 
-        <div>
-          <p className="text-red-600 font-semibold">
+        <div className="p-4 rounded-xl bg-white/5 border border-white/5 hover:border-red-500/30 transition-colors">
+          <p className="text-red-400 font-medium text-sm mb-1 uppercase tracking-wider">
             Absent
           </p>
-          <p className="text-xl">{absent}</p>
+          <p className="text-3xl font-bold text-white">{absent}</p>
         </div>
 
-        <div>
-          <p className="text-yellow-600 font-semibold">
+        <div className="p-4 rounded-xl bg-white/5 border border-white/5 hover:border-amber-500/30 transition-colors">
+          <p className="text-amber-400 font-medium text-sm mb-1 uppercase tracking-wider">
             Leave
           </p>
-          <p className="text-xl">{leave}</p>
+          <p className="text-3xl font-bold text-white">{leave}</p>
         </div>
       </div>
     </Card>

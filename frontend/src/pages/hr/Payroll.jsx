@@ -81,7 +81,7 @@ export default function Payroll() {
   return (
     <MainLayout>
 
-      <h1 className="text-2xl font-semibold mb-6">
+      <h1 className="text-3xl font-bold text-white mb-8 tracking-tight">
         Payroll
       </h1>
 
@@ -90,12 +90,12 @@ export default function Payroll() {
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
 
           <select
-            className="border px-3 py-2 rounded"
+            className="w-full bg-black/50 border border-white/10 text-white px-4 py-2.5 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all appearance-none"
             onChange={e => setEmployee(e.target.value)}
           >
-            <option>Select Employee</option>
+            <option value="" className="bg-black">Select Employee</option>
             {employees.map(emp => (
-              <option key={emp._id} value={emp._id}>
+              <option key={emp._id} value={emp._id} className="bg-black">
                 {emp.employeeId} - {emp.name}
               </option>
             ))}
@@ -104,82 +104,82 @@ export default function Payroll() {
           <input
             type="text"
             placeholder="Month"
-            className="border px-3 py-2 rounded"
+            className="w-full bg-black/50 border border-white/10 text-white placeholder-gray-500 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
             onChange={e => setMonth(e.target.value)}
           />
 
           <input
             type="number"
             placeholder="Basic Salary"
-            className="border px-3 py-2 rounded"
+            className="w-full bg-black/50 border border-white/10 text-white placeholder-gray-500 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
             onChange={e => setBasicSalary(e.target.value)}
           />
 
           <input
             type="number"
             placeholder="Allowances"
-            className="border px-3 py-2 rounded"
+            className="w-full bg-black/50 border border-white/10 text-white placeholder-gray-500 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
             onChange={e => setAllowances(e.target.value)}
           />
 
           <input
             type="number"
             placeholder="Deductions"
-            className="border px-3 py-2 rounded"
+            className="w-full bg-black/50 border border-white/10 text-white placeholder-gray-500 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
             onChange={e => setDeductions(e.target.value)}
           />
 
           <button
             onClick={handleAdd}
-            className="bg-blue-600 text-white px-4 py-2 rounded"
+            className="w-full bg-blue-600 text-white font-semibold py-2.5 rounded-xl hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] transition-all transform hover:-translate-y-0.5"
           >
             Add
           </button>
 
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="min-w-[600px] w-full text-left border-collapse">
+        <div className="w-full overflow-hidden rounded-xl border border-white/10">
+          <table className="min-w-full text-left border-collapse">
 
-            <thead>
-              <tr className="border-b">
-                <th className="px-4 py-2">Employee</th>
-                <th className="px-4 py-2">Month</th>
-                <th className="px-4 py-2">Net Salary</th>
-                <th className="px-4 py-2">Actions</th>
+            <thead className="bg-white/5 border-b border-white/10">
+              <tr>
+                <th className="p-4 text-gray-400 font-semibold text-sm tracking-wide">Employee</th>
+                <th className="p-4 text-gray-400 font-semibold text-sm tracking-wide">Month</th>
+                <th className="p-4 text-gray-400 font-semibold text-sm tracking-wide">Net Salary</th>
+                <th className="p-4 text-gray-400 font-semibold text-sm tracking-wide">Actions</th>
               </tr>
             </thead>
 
-            <tbody>
+            <tbody className="divide-y divide-white/10 bg-white/[0.02]">
 
               {payroll.map(item => (
 
-                <tr key={item._id} className="border-t">
+                <tr key={item._id} className="hover:bg-white/5 transition-colors">
 
-                  <td className="px-4 py-2">
+                  <td className="p-4 text-gray-300 font-medium whitespace-nowrap">
                     {item.employee?.employeeId} - {item.employee?.name}
                   </td>
 
-                  <td className="px-4 py-2">
+                  <td className="p-4 text-gray-400 whitespace-nowrap">
                     {item.month}
                   </td>
 
-                  <td className="px-4 py-2">
-                    {item.netSalary}
+                  <td className="p-4 text-gray-400 whitespace-nowrap font-mono text-emerald-400">
+                    ₹{item.netSalary}
                   </td>
 
-                  <td className="px-4 py-2 space-x-2">
+                  <td className="p-4 space-x-3 whitespace-nowrap">
 
                     <button
                       onClick={() => handleEdit(item)}
-                      className="text-blue-600"
+                      className="text-blue-400 hover:text-blue-300 transition-colors font-medium text-sm"
                     >
                       Edit
                     </button>
 
                     <button
                       onClick={() => handleDelete(item._id)}
-                      className="text-red-600"
+                      className="text-red-400 hover:text-red-300 transition-colors font-medium text-sm"
                     >
                       Delete
                     </button>
