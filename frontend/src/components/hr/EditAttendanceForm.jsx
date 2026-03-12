@@ -21,7 +21,7 @@ export default function EditAttendanceForm({ initial, onSubmit }) {
       <select
         value={status}
         onChange={e => setStatus(e.target.value)}
-        className="border px-3 py-2 rounded w-full"
+        className="bg-black border px-3 py-2 rounded w-full"
       >
         <option>Present</option>
         <option>Absent</option>
