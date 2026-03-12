@@ -26,7 +26,6 @@ The project is intentionally structured to be **extensible, maintainable, and pr
 - **Vite**
 - **TailwindCSS v3**
 - **React Router DOM**
-- **Recharts** (Charts & Analytics)
 - **Context API** (Auth & Global State)
 
 ---
