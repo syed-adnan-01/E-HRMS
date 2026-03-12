@@ -29,28 +29,26 @@ export const getDashboardStats = async (req, res) => {
     // TOTAL EMPLOYEES (ACTIVE ONLY)
     const totalEmployees = await Employee.countDocuments({ status: 'Active' })
 
-    // TODAY DATE RANGE
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-
-    const tomorrow = new Date(today)
-    tomorrow.setDate(tomorrow.getDate() + 1)
+    // TODAY DATE RANGE (Normalized to UTC midnight of local today)
+    const now = new Date()
+    const todayStartUtc = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0))
+    const todayEndUtc = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999))
 
     // PRESENT TODAY
     const presentToday = await Attendance.countDocuments({
       status: "Present",
-      date: { $gte: today, $lt: tomorrow }
+      date: { $gte: todayStartUtc, $lte: todayEndUtc }
     })
 
     // ABSENT TODAY
     const absentToday = await Attendance.countDocuments({
       status: "Absent",
-      date: { $gte: today, $lt: tomorrow }
+      date: { $gte: todayStartUtc, $lte: todayEndUtc }
     })
 
     // CURRENT MONTH RANGE
-    const firstDay = new Date(today.getFullYear(), today.getMonth(), 1)
-    const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0)
+    const firstDay = new Date(Date.UTC(now.getFullYear(), now.getMonth(), 1))
+    const lastDay = new Date(Date.UTC(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999))
 
     // MONTHLY PAYROLL
     const payroll = await Payroll.aggregate([
@@ -84,12 +82,16 @@ export const getDashboardStats = async (req, res) => {
 // GET ATTENDANCE SUMMARY
 export const getAttendanceSummary = async (req, res) => {
   try {
+    const now = new Date()
+    const todayStartUtc = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0))
+    const todayEndUtc = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999))
+
     const summary = await Attendance.aggregate([
       {
         $match: {
           date: {
-            $gte: new Date(new Date().setHours(0, 0, 0, 0)),
-            $lte: new Date(new Date().setHours(23, 59, 59, 999))
+            $gte: todayStartUtc,
+            $lte: todayEndUtc
           }
         }
       },
@@ -151,25 +153,22 @@ export const getHeadcountChart = async (req, res) => {
 
 export const getAttendanceChart = async (req, res) => {
   try {
-
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-
-    const tomorrow = new Date(today)
-    tomorrow.setDate(tomorrow.getDate() + 1)
+    const now = new Date()
+    const todayStartUtc = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0))
+    const todayEndUtc = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999))
 
     const present = await Attendance.countDocuments({
-      date: { $gte: today, $lt: tomorrow },
+      date: { $gte: todayStartUtc, $lte: todayEndUtc },
       status: "Present"
     })
 
     const absent = await Attendance.countDocuments({
-      date: { $gte: today, $lt: tomorrow },
+      date: { $gte: todayStartUtc, $lte: todayEndUtc },
       status: "Absent"
     })
 
     const leave = await Attendance.countDocuments({
-      date: { $gte: today, $lt: tomorrow },
+      date: { $gte: todayStartUtc, $lte: todayEndUtc },
       status: "Leave"
     })
 
