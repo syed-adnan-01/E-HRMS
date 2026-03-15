@@ -74,6 +74,15 @@ export default function EditEmployeeForm({ initial, onSubmit }) {
         onChange={handleChange}
       />
 
+      <Select
+        name="status"
+        value={form.status}
+        onChange={handleChange}
+      >
+        <option value="Active">Active</option>
+        <option value="Inactive">Inactive</option>
+      </Select>
+
       <button
         type="submit"
         className="w-full bg-green-600 text-white py-2 rounded"
