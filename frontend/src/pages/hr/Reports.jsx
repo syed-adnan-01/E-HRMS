@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import MainLayout from "../../layouts/MainLayout"
 import Card from "../../components/ui/Card"
 import Select from "../../components/ui/Select"
+import Loader from "../../components/ui/Loader"
 import { getAttendanceReport, getPayrollReport } from "../../api/reportApi"
 import { exportToCsv } from "../../utils/exportCsv"
 
@@ -10,12 +11,14 @@ export default function Reports() {
 
   const [type, setType] = useState("attendance")
   const [data, setData] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     fetchReports()
   }, [type])
 
   async function fetchReports() {
+    setLoading(true)
     try {
 
       if (type === "attendance") {
@@ -50,6 +53,8 @@ export default function Reports() {
 
     } catch (err) {
       console.log(err)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -59,7 +64,10 @@ export default function Reports() {
 
   return (
     <MainLayout>
-
+      {loading ? (
+        <Loader fullScreen={false} />
+      ) : (
+        <>
       <h1 className="text-3xl font-bold text-white mb-8 tracking-tight">Reports</h1>
 
       <Card>
@@ -169,7 +177,8 @@ export default function Reports() {
         </div>
 
       </Card>
-
+        </>
+      )}
     </MainLayout>
   )
 }

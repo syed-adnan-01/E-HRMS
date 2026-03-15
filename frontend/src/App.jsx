@@ -1,17 +1,19 @@
+import { Suspense, lazy } from "react"
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 
 import { AuthProvider } from "./context/AuthContext"
 import ProtectedRoute from "./routes/ProtectedRoute"
+import Loader from "./components/ui/Loader"
 
-import Login from "./pages/auth/Login"
-import Register from "./pages/auth/Register"
-import LandingPage from "./pages/LandingPage"
+const Login = lazy(() => import("./pages/auth/Login"))
+const Register = lazy(() => import("./pages/auth/Register"))
+const LandingPage = lazy(() => import("./pages/LandingPage"))
 
-import Dashboard from "./pages/hr/Dashboard"
-import Employees from "./pages/hr/Employees"
-import Attendance from "./pages/hr/Attendance"
-import Payroll from "./pages/hr/Payroll"
-import Reports from "./pages/hr/Reports"
+const Dashboard = lazy(() => import("./pages/hr/Dashboard"))
+const Employees = lazy(() => import("./pages/hr/Employees"))
+const Attendance = lazy(() => import("./pages/hr/Attendance"))
+const Payroll = lazy(() => import("./pages/hr/Payroll"))
+const Reports = lazy(() => import("./pages/hr/Reports"))
 
 export default function App() {
 
@@ -19,6 +21,7 @@ export default function App() {
     <AuthProvider>
 
       <Router>
+        <Suspense fallback={<Loader fullScreen={true} />}>
 
         <Routes>
 
@@ -71,8 +74,8 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-
         </Routes>
+        </Suspense>
 
       </Router>
 

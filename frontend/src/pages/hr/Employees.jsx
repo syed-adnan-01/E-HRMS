@@ -5,6 +5,7 @@ import Table from "../../components/ui/Table"
 import Input from "../../components/ui/Input"
 import Select from "../../components/ui/Select"
 import Modal from "../../components/ui/Modal"
+import Loader from "../../components/ui/Loader"
 
 import AddEmployeeForm from "../../components/hr/AddEmployeeForm"
 import EditEmployeeForm from "../../components/hr/EditEmployeeForm"
@@ -25,18 +26,21 @@ export default function Employees() {
   const [open, setOpen] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
   const [selected, setSelected] = useState(null)
+  const [loading, setLoading] = useState(true)
 
   const columns = ["ID", "Name", "Department", "Role", "Status"]
 
   // 🔹 LOAD EMPLOYEES (GET)
-  const loadEmployees = () => {
+  const loadEmployees = (isInitial = false) => {
+    if (isInitial) setLoading(true)
     getEmployees()
       .then(res => setEmployees(res.data))
       .catch(err => console.error(err))
+      .finally(() => { if (isInitial) setLoading(false) })
   }
 
   useEffect(() => {
-    loadEmployees()
+    loadEmployees(true)
   }, [])
 
   // 🔹 ADD EMPLOYEE (POST)
@@ -80,7 +84,10 @@ export default function Employees() {
 
   return (
     <MainLayout>
-
+      {loading ? (
+        <Loader fullScreen={false} />
+      ) : (
+        <>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-white tracking-tight">Employees</h1>
         <button
@@ -133,7 +140,8 @@ export default function Employees() {
           />
         )}
       </Modal>
-
+        </>
+      )}
     </MainLayout>
   )
 }

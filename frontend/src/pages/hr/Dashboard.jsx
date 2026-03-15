@@ -5,6 +5,7 @@ import KpiCard from "../../components/dashboard/KpiCard"
 import AttendanceSummary from "../../components/dashboard/AttendanceSummary"
 import EmployeeStatus from "../../components/dashboard/EmployeeStatus"
 import { getDashboardStats } from "../../api/dashboardApi"
+import Loader from "../../components/ui/Loader"
 
 
 export default function Dashboard() {
@@ -14,6 +15,7 @@ export default function Dashboard() {
     absentToday: 0,
     monthlyPayroll: 0,
   })
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     fetchStats()
@@ -25,12 +27,18 @@ export default function Dashboard() {
       setStats(res.data)
     } catch (err) {
       console.log(err)
+    } finally {
+      setLoading(false)
     }
   }
 
   return (
     <MainLayout>
-      <h1 className="text-3xl font-bold text-white mb-8 tracking-tight">Dashboard</h1>
+      {loading ? (
+        <Loader fullScreen={false} />
+      ) : (
+        <>
+          <h1 className="text-3xl font-bold text-white mb-8 tracking-tight">Dashboard</h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <KpiCard title="Total Employees" value={stats.totalEmployees} />
@@ -43,6 +51,8 @@ export default function Dashboard() {
         <AttendanceSummary />
         <EmployeeStatus />
       </div>
+        </>
+      )}
     </MainLayout>
   )
 }

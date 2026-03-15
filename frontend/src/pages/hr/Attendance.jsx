@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import MainLayout from "../../layouts/MainLayout"
 import Card from "../../components/ui/Card"
 import Modal from "../../components/ui/Modal"
+import Loader from "../../components/ui/Loader"
 
 import {
   getAttendance,
@@ -26,14 +27,19 @@ export default function Attendance() {
 
   const [selected, setSelected] = useState(null)
   const [openEdit, setOpenEdit] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   // =========================
   // FETCH DATA
   // =========================
 
   useEffect(() => {
-    fetchAttendance()
-    fetchEmployees()
+    async function loadAll() {
+      setLoading(true)
+      await Promise.all([fetchAttendance(), fetchEmployees()])
+      setLoading(false)
+    }
+    loadAll()
   }, [])
 
   async function fetchAttendance() {
@@ -100,7 +106,10 @@ export default function Attendance() {
 
   return (
     <MainLayout>
-
+      {loading ? (
+        <Loader fullScreen={false} />
+      ) : (
+        <>
       <h1 className="text-3xl font-bold text-white mb-8 tracking-tight">
         Attendance
       </h1>
@@ -233,7 +242,8 @@ export default function Attendance() {
           />
         )}
       </Modal>
-
+        </>
+      )}
     </MainLayout>
   )
 }

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import MainLayout from "../../layouts/MainLayout"
 import Card from "../../components/ui/Card"
 import Modal from "../../components/ui/Modal"
+import Loader from "../../components/ui/Loader"
 
 import {
   getPayroll,
@@ -28,10 +29,15 @@ export default function Payroll() {
 
   const [selected, setSelected] = useState(null)
   const [openEdit, setOpenEdit] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetchPayroll()
-    fetchEmployees()
+    async function loadAll() {
+      setLoading(true)
+      await Promise.all([fetchPayroll(), fetchEmployees()])
+      setLoading(false)
+    }
+    loadAll()
   }, [])
 
   async function fetchPayroll() {
@@ -80,7 +86,10 @@ export default function Payroll() {
 
   return (
     <MainLayout>
-
+      {loading ? (
+        <Loader fullScreen={false} />
+      ) : (
+        <>
       <h1 className="text-3xl font-bold text-white mb-8 tracking-tight">
         Payroll
       </h1>
@@ -209,7 +218,8 @@ export default function Payroll() {
           />
         )}
       </Modal>
-
+        </>
+      )}
     </MainLayout>
   )
 }
