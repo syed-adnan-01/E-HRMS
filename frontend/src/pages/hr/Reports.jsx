@@ -6,13 +6,8 @@ import Select from "../../components/ui/Select"
 import Loader from "../../components/ui/Loader"
 import { getAttendanceReport, getPayrollReport } from "../../api/reportApi"
 import { exportToCsv } from "../../utils/exportCsv"
-import Modal from "../../components/ui/Modal"
-
-import EditAttendanceForm from "../../components/hr/EditAttendanceForm"
-import EditPayrollForm from "../../components/hr/EditPayrollForm"
-
-import { updateAttendance, deleteAttendance } from "../../api/attendanceApi"
-import { updatePayroll, deletePayroll } from "../../api/payrollApi"
+import { deleteAttendance } from "../../api/attendanceApi"
+import { deletePayroll } from "../../api/payrollApi"
 
 export default function Reports() {
 
@@ -21,8 +16,7 @@ export default function Reports() {
   const [rawData, setRawData] = useState([])
   const [loading, setLoading] = useState(true)
 
-  const [selected, setSelected] = useState(null)
-  const [openEdit, setOpenEdit] = useState(false)
+
 
   useEffect(() => {
     fetchReports()
@@ -75,22 +69,7 @@ export default function Reports() {
     exportToCsv(`${type}_report.csv`, data)
   }
 
-  function handleEdit(index) {
-    setSelected(rawData[index])
-    setOpenEdit(true)
-  }
 
-  async function handleUpdateAttendance(updated) {
-    await updateAttendance(selected._id, updated)
-    await fetchReports()
-    setOpenEdit(false)
-  }
-
-  async function handleUpdatePayroll(updated) {
-    await updatePayroll(selected._id, updated)
-    await fetchReports()
-    setOpenEdit(false)
-  }
 
   async function handleDelete(index) {
     const item = rawData[index]
@@ -199,9 +178,6 @@ export default function Reports() {
                 )}
 
                 <td className="p-4 space-x-3 whitespace-nowrap">
-                  <span onClick={() => handleEdit(index)} className="text-blue-400 hover:text-blue-300 transition-colors font-medium text-sm cursor-pointer mr-2">
-                    Edit
-                  </span>
                   <span onClick={() => handleDelete(index)} className="text-red-400 hover:text-red-300 transition-colors font-medium text-sm cursor-pointer">
                     Delete
                   </span>
@@ -217,26 +193,6 @@ export default function Reports() {
         </div>
 
       </Card>
-
-      <Modal
-        open={openEdit}
-        onClose={() => setOpenEdit(false)}
-        title={`Edit ${type === "attendance" ? "Attendance" : "Payroll"}`}
-      >
-        {selected && (
-          type === "attendance" ? (
-            <EditAttendanceForm
-              initial={selected}
-              onSubmit={handleUpdateAttendance}
-            />
-          ) : (
-            <EditPayrollForm
-              initial={selected}
-              onSubmit={handleUpdatePayroll}
-            />
-          )
-        )}
-      </Modal>
 
         </>
       )}
