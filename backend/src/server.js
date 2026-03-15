@@ -22,6 +22,5 @@ connectDB()
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
+  console.log(`Email Service configured for: ${process.env.EMAIL_USER}`)
 })
-
-// Trigger nodemon restart for Atlas

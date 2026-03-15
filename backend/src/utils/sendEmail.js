@@ -1,29 +1,31 @@
 import nodemailer from "nodemailer";
 
 const sendEmail = async (options) => {
-  // Create a transporter
+  console.log(`[sendEmail] Attempting to notify: ${options.email}`);
+  
   const transporter = nodemailer.createTransport({
-    service: "Gmail", // You can configure this to other services (e.g., SendGrid, Mailchimp)
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true, // Use SSL
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
   });
 
-  // Define the email options
   const mailOptions = {
-    from: `HR Department <${process.env.EMAIL_USER}>`,
+    from: `"WorkSphere HR" <${process.env.EMAIL_USER}>`,
     to: options.email,
     subject: options.subject,
     text: options.message,
   };
 
-  // Send the email
   try {
-    await transporter.sendMail(mailOptions);
-    console.log("Email sent successfully to:", options.email);
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`[sendEmail] Success! Message ID: ${info.messageId}`);
   } catch (error) {
-    console.error("Error sending email:", error);
+    console.error(`[sendEmail] CRITICAL ERROR: ${error.message}`);
+    throw error;
   }
 };
 
