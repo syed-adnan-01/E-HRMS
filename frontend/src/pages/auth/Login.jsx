@@ -2,12 +2,14 @@ import { useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import { useAuth } from "../../context/AuthContext"
 import { loginUser } from "../../api/authApi"
+import Loader from "../../components/ui/Loader"
 
 export default function Login() {
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
+  const [loading, setLoading] = useState(false)
 
   const { login } = useAuth()
   const navigate = useNavigate()
@@ -15,6 +17,7 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError("")
+    setLoading(true)
 
     try {
 
@@ -37,11 +40,15 @@ export default function Login() {
 
     } catch (err) {
       setError(err.response?.data?.message || "Login Failed")
+    } finally {
+      setLoading(false)
     }
   }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-black selection:bg-blue-500/30 relative overflow-hidden">
+      {loading && <div className="fixed inset-0 z-[100]"><Loader fullScreen={true} /></div>}
+      
       {/* Background Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none"></div>
 

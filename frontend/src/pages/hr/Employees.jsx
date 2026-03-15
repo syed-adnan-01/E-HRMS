@@ -27,13 +27,14 @@ export default function Employees() {
   const [editOpen, setEditOpen] = useState(false)
   const [selected, setSelected] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [actionLoading, setActionLoading] = useState(false)
 
   const columns = ["ID", "Name", "Department", "Role", "Status"]
 
   // 🔹 LOAD EMPLOYEES (GET)
   const loadEmployees = (isInitial = false) => {
     if (isInitial) setLoading(true)
-    getEmployees()
+    return getEmployees()
       .then(res => setEmployees(res.data))
       .catch(err => console.error(err))
       .finally(() => { if (isInitial) setLoading(false) })
@@ -45,9 +46,14 @@ export default function Employees() {
 
   // 🔹 ADD EMPLOYEE (POST)
   const handleAddEmployee = async (data) => {
-    await addEmployee(data)
-    setOpen(false)
-    loadEmployees()
+    setActionLoading(true)
+    try {
+      await addEmployee(data)
+      setOpen(false)
+      await loadEmployees()
+    } finally {
+      setActionLoading(false)
+    }
   }
 
 
@@ -59,21 +65,29 @@ export default function Employees() {
 
   // 🔹 UPDATE EMPLOYEE (PUT)
   const handleUpdateEmployee = async (data) => {
-    await updateEmployee(selected._id, data)
-    setEditOpen(false)
-    setSelected(null)
-    loadEmployees()
+    setActionLoading(true)
+    try {
+      await updateEmployee(selected._id, data)
+      setEditOpen(false)
+      setSelected(null)
+      await loadEmployees()
+    } finally {
+      setActionLoading(false)
+    }
   }
 
 
   // 🔹 DELETE EMPLOYEE (DELETE)
   const handleDeleteEmployee = async (id) => {
     if (!window.confirm("Are you sure you want to delete this employee?")) return
+    setActionLoading(true)
     try {
       await deleteEmployee(id)
-      loadEmployees()
+      await loadEmployees()
     } catch (err) {
       console.error(err)
+    } finally {
+      setActionLoading(false)
     }
   }
 
@@ -88,6 +102,7 @@ export default function Employees() {
         <Loader fullScreen={false} />
       ) : (
         <>
+      {actionLoading && <div className="fixed inset-0 z-[100]"><Loader fullScreen={true} /></div>}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-white tracking-tight">Employees</h1>
         <button
