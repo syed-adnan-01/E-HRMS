@@ -18,9 +18,18 @@ app.use("/api/reports", reportRoutes)
 
 const PORT = process.env.PORT || 5000
 
-connectDB()
+// We wrap startup in an async function to ensure DB is ready before server accepts requests
+const startServer = async () => {
+  try {
+    await connectDB()
+    
+    app.listen(PORT, () => {
+      console.log(`✅ SERVER ACTIVE: http://localhost:${PORT}`)
+      console.log(`📧 MAIL SERVICE: ${process.env.EMAIL_USER}`)
+    })
+  } catch (error) {
+    console.error("❌ CRITICAL STARTUP ERROR:", error.message)
+  }
+}
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-  console.log(`Email Service configured for: ${process.env.EMAIL_USER}`)
-})
+startServer()

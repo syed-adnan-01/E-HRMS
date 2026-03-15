@@ -57,14 +57,26 @@ export default function Attendance() {
   // =========================
 
   async function handleMark() {
+    console.log("DEBUG: handleMark called with:", { employee, date, status });
+    
+    if (!employee || !date || !status) {
+      alert("Please select employee, date, and status!");
+      return;
+    }
 
-    await markAttendance({
-      employee,
-      date,
-      status
-    })
-
-    await fetchAttendance()
+    try {
+      const res = await markAttendance({
+        employee,
+        date,
+        status
+      })
+      console.log("DEBUG: markAttendance Response:", res.data);
+      await fetchAttendance()
+      alert("Success! Attendance marked.");
+    } catch (err) {
+      console.error("DEBUG: markAttendance Error:", err);
+      alert("Error: " + (err.response?.data?.message || err.message));
+    }
   }
 
   // =========================

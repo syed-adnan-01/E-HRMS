@@ -9,15 +9,29 @@ export const markAttendance = async (req, res) => {
 
   try {
     if (!employee || !date || !status) {
-        throw new Error("Missing required fields: employee, date, or status");
+        console.warn(`[Attendance] Missing fields in request: emp=${employee}, date=${date}, status=${status}`);
+        return res.status(400).json({ message: "Missing required fields" });
     }
 
-    const selectedDate = new Date(date + "T00:00:00Z")
-    const startOfDay = new Date(selectedDate)
-    startOfDay.setUTCHours(0, 0, 0, 0)
+    // Parse date safely
+    let selectedDate = new Date(date);
+    if (isNaN(selectedDate.getTime())) {
+        // Try parsing with T00:00:00Z explicitly
+        selectedDate = new Date(date + "T00:00:00Z");
+    }
+
+    if (isNaN(selectedDate.getTime())) {
+        console.error(`[Attendance] Invalid date received: ${date}`);
+        return res.status(400).json({ message: "Invalid date format" });
+    }
+
+    const startOfDay = new Date(selectedDate);
+    startOfDay.setUTCHours(0, 0, 0, 0);
     
-    const endOfDay = new Date(selectedDate)
-    endOfDay.setUTCHours(23, 59, 59, 999)
+    const endOfDay = new Date(selectedDate);
+    endOfDay.setUTCHours(23, 59, 59, 999);
+
+    console.log(`[Attendance] Querying between ${startOfDay.toISOString()} and ${endOfDay.toISOString()}`);
 
     const existing = await Attendance.findOne({
       employee,
