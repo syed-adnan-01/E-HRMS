@@ -32,4 +32,13 @@ const startServer = async () => {
   }
 }
 
+// Final crash protection
+process.on("unhandledRejection", (err) => {
+  console.error("DEBUG: Unhandled Rejection at Promise", err);
+});
+
+process.on("uncaughtException", (err) => {
+  console.error("DEBUG: Uncaught Exception thrown", err);
+});
+
 startServer()
