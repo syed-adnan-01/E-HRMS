@@ -1,4 +1,6 @@
 import Attendance from "../models/attendanceModel.js"
+import Employee from "../models/Employee.js"
+import sendEmail from "../utils/sendEmail.js"
 
 // Mark Attendance
 export const markAttendance = async (req, res) => {
@@ -33,6 +35,16 @@ export const markAttendance = async (req, res) => {
     })
 
     if (existing) {
+      if (existing.status !== "Absent" && status === "Absent") {
+        const emp = await Employee.findById(employee)
+        if (emp) {
+          await sendEmail({
+            email: emp.email,
+            subject: "Attendance Notification: Marked Absent",
+            message: `Dear ${emp.name},\n\nYou have been marked as absent for ${new Date(date).toLocaleDateString()}.\n\nRegards,\nHR Department`
+          })
+        }
+      }
 
       existing.status = status
       await existing.save()
@@ -45,6 +57,17 @@ export const markAttendance = async (req, res) => {
       date,
       status
     })
+
+    if (status === "Absent") {
+      const emp = await Employee.findById(employee)
+      if (emp) {
+        await sendEmail({
+          email: emp.email,
+          subject: "Attendance Notification: Marked Absent",
+          message: `Dear ${emp.name},\n\nYou have been marked as absent for ${new Date(date).toLocaleDateString()}.\n\nRegards,\nHR Department`
+        })
+      }
+    }
 
     res.status(201).json(attendance)
 
@@ -72,12 +95,24 @@ export const getAttendance = async (req, res) => {
 // Update Attendance
 export const updateAttendance = async (req, res) => {
   try {
+    const original = await Attendance.findById(req.params.id)
 
     const updated = await Attendance.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true }
     )
+
+    if (original && original.status !== "Absent" && updated.status === "Absent") {
+      const emp = await Employee.findById(updated.employee)
+      if (emp) {
+        await sendEmail({
+          email: emp.email,
+          subject: "Attendance Notification: Marked Absent",
+          message: `Dear ${emp.name},\n\nYou have been marked as absent for ${new Date(updated.date).toLocaleDateString()}.\n\nRegards,\nHR Department`
+        })
+      }
+    }
 
     res.json(updated)
 
