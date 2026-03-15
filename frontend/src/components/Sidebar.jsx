@@ -42,7 +42,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
                 key={item.name}
                 to={item.path}
                 className={({ isActive }) =>
-                  `block px-4 py-2 rounded transition-colors ${isActive ? "bg-blue-600 text-white shadow-[0_0_10px_rgba(59,130,246,0.3)]" : "hover:bg-slate-800 hover:text-white"
+                  `block px-4 py-2 rounded transition-colors ${isActive ? "bg-blue-600 text-white" : "hover:bg-slate-800 hover:text-white"
                   }`
                 }
               >
