@@ -58,11 +58,14 @@ export default function Attendance() {
     async function fetchByDepartment() {
       if (selectedDepartment) {
         setLoading(true)
+        // Pass department as query param
         const res = await getEmployees(selectedDepartment)
-        setEmployees(res.data)
+        // Filter employees on frontend as fallback (in case backend returns all)
+        const filtered = res.data.filter(emp => emp.department === selectedDepartment)
+        setEmployees(filtered)
         // Reset bulkStatus for new department
         const initialStatus = {}
-        res.data.forEach(emp => {
+        filtered.forEach(emp => {
           initialStatus[emp._id] = "Present"
         })
         setBulkStatus(initialStatus)
