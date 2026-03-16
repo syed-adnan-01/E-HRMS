@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/immutability */
 import { useEffect, useState } from "react"
-import { employees as staticEmployees } from "../../data/employees"
 import MainLayout from "../../layouts/MainLayout"
 import Card from "../../components/ui/Card"
 import Modal from "../../components/ui/Modal"
@@ -40,8 +39,9 @@ export default function Attendance() {
     async function loadAll() {
       setLoading(true)
       await fetchAttendance()
-      // Get unique departments from staticEmployees (or you can fetch from backend if needed)
-      const uniqueDepartments = Array.from(new Set(staticEmployees.map(emp => emp.department)))
+      // Fetch departments from backend employees
+      const res = await getEmployees()
+      const uniqueDepartments = Array.from(new Set(res.data.map(emp => emp.department)))
       setDepartments(uniqueDepartments)
       setLoading(false)
     }
