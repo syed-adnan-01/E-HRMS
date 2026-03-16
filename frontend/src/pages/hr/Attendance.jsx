@@ -88,6 +88,11 @@ export default function Attendance() {
       alert("Please select a date!");
       return;
     }
+    // Defensive: do not allow marking if date is empty
+    if (!date.trim()) {
+      alert("Date is required.");
+      return;
+    }
     const promises = employees.map(emp =>
       markAttendance({
         employee: emp._id,
@@ -184,7 +189,7 @@ export default function Attendance() {
           {/* Bulk Mark button */}
           <button
             onClick={handleBulkMark}
-            className="w-full bg-blue-600 text-white font-semibold py-2.5 rounded-xl hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] transition-all transform hover:-translate-y-0.5"
+            className="w-full bg-blue-600 text-white font-semibold py-2.5 rounded-xl hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] transition-all transform hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed"
             disabled={!selectedDepartment || employees.length === 0 || !date}
           >
             Mark Attendance for All
