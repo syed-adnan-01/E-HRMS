@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/immutability */
 import { useEffect, useState } from "react"
+import { employees as staticEmployees } from "../../data/employees"
 import MainLayout from "../../layouts/MainLayout"
 import Card from "../../components/ui/Card"
 import Modal from "../../components/ui/Modal"
@@ -18,9 +19,11 @@ import EditAttendanceForm from "../../components/hr/EditAttendanceForm"
 
 export default function Attendance() {
 
+
   const [attendance, setAttendance] = useState([])
   const [employees, setEmployees] = useState([])
-
+  const [departments, setDepartments] = useState([])
+  const [selectedDepartment, setSelectedDepartment] = useState("")
   const [employee, setEmployee] = useState("")
   const [date, setDate] = useState("")
   const [status, setStatus] = useState("Present")
@@ -33,10 +36,14 @@ export default function Attendance() {
   // FETCH DATA
   // =========================
 
+
   useEffect(() => {
     async function loadAll() {
       setLoading(true)
-      await Promise.all([fetchAttendance(), fetchEmployees()])
+      await fetchAttendance()
+      // Get unique departments from staticEmployees (or you can fetch from backend if needed)
+      const uniqueDepartments = Array.from(new Set(staticEmployees.map(emp => emp.department)))
+      setDepartments(uniqueDepartments)
       setLoading(false)
     }
     loadAll()
@@ -47,10 +54,21 @@ export default function Attendance() {
     setAttendance(res.data)
   }
 
-  async function fetchEmployees() {
-    const res = await getEmployees()
-    setEmployees(res.data)
-  }
+  // Fetch employees when department changes
+  useEffect(() => {
+    async function fetchByDepartment() {
+      if (selectedDepartment) {
+        setLoading(true)
+        const res = await getEmployees(selectedDepartment)
+        setEmployees(res.data)
+        setLoading(false)
+      } else {
+        setEmployees([])
+      }
+      setEmployee("") // Reset selected employee
+    }
+    fetchByDepartment()
+  }, [selectedDepartment])
 
   // =========================
   // MARK ATTENDANCE
@@ -130,11 +148,26 @@ export default function Attendance() {
 
         {/* MARK ATTENDANCE */}
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
 
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+          {/* Department Select */}
           <select
             className="w-full bg-black/50 border border-white/10 text-white px-4 py-2.5 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all appearance-none"
+            value={selectedDepartment}
+            onChange={e => setSelectedDepartment(e.target.value)}
+          >
+            <option value="" className="bg-black">Select Department</option>
+            {departments.map(dep => (
+              <option key={dep} value={dep} className="bg-black">{dep}</option>
+            ))}
+          </select>
+
+          {/* Employee Select (filtered by department) */}
+          <select
+            className="w-full bg-black/50 border border-white/10 text-white px-4 py-2.5 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all appearance-none"
+            value={employee}
             onChange={e => setEmployee(e.target.value)}
+            disabled={!selectedDepartment}
           >
             <option value="" className="bg-black">Select Employee</option>
             {employees.map(emp => (
@@ -144,6 +177,7 @@ export default function Attendance() {
             ))}
           </select>
 
+          {/* Date input */}
           <input
             type="text"
             placeholder="dd/mm/yyyy"
@@ -155,8 +189,10 @@ export default function Attendance() {
             onChange={e => setDate(e.target.value)}
           />
 
+          {/* Status select */}
           <select
             className="w-full bg-black/50 border border-white/10 text-white px-4 py-2.5 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all appearance-none"
+            value={status}
             onChange={e => setStatus(e.target.value)}
           >
             <option className="bg-black">Present</option>
@@ -164,13 +200,14 @@ export default function Attendance() {
             <option className="bg-black">Leave</option>
           </select>
 
+          {/* Mark button */}
           <button
             onClick={handleMark}
             className="w-full bg-blue-600 text-white font-semibold py-2.5 rounded-xl hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] transition-all transform hover:-translate-y-0.5"
+            disabled={!employee || !selectedDepartment}
           >
             Mark
           </button>
-
         </div>
 
         {/* TABLE */}

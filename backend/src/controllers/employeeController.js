@@ -28,9 +28,19 @@ export const createEmployee = async (req, res) => {
 }
 
 
+// Get all employees or filter by department
 export const getEmployees = async (req, res) => {
-  const employees = await Employee.find().sort({ employeeId: 1 })
-  res.json(employees)
+  try {
+    const { department } = req.query;
+    let query = {};
+    if (department) {
+      query.department = department;
+    }
+    const employees = await Employee.find(query).sort({ employeeId: 1 });
+    res.json(employees);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 }
 
 export const getEmployeeById = async (req, res) => {
