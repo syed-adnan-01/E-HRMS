@@ -24,9 +24,8 @@ export default function Attendance() {
   const [employees, setEmployees] = useState([])
   const [departments, setDepartments] = useState([])
   const [selectedDepartment, setSelectedDepartment] = useState("")
-  const [employee, setEmployee] = useState("")
   const [date, setDate] = useState("")
-  const [status, setStatus] = useState("Present")
+  const [bulkStatus, setBulkStatus] = useState({}) // { employeeId: status }
 
   const [selected, setSelected] = useState(null)
   const [openEdit, setOpenEdit] = useState(false)
@@ -61,11 +60,17 @@ export default function Attendance() {
         setLoading(true)
         const res = await getEmployees(selectedDepartment)
         setEmployees(res.data)
+        // Reset bulkStatus for new department
+        const initialStatus = {}
+        res.data.forEach(emp => {
+          initialStatus[emp._id] = "Present"
+        })
+        setBulkStatus(initialStatus)
         setLoading(false)
       } else {
         setEmployees([])
+        setBulkStatus({})
       }
-      setEmployee("") // Reset selected employee
     }
     fetchByDepartment()
   }, [selectedDepartment])
@@ -74,26 +79,25 @@ export default function Attendance() {
   // MARK ATTENDANCE
   // =========================
 
-  async function handleMark() {
-    console.log("DEBUG: handleMark called with:", { employee, date, status });
-    
-    if (!employee || !date || !status) {
-      alert("Please select employee, date, and status!");
+  // Bulk mark attendance for all employees in department
+  async function handleBulkMark() {
+    if (!date) {
+      alert("Please select a date!");
       return;
     }
-
-    try {
-      const res = await markAttendance({
-        employee,
+    const promises = employees.map(emp =>
+      markAttendance({
+        employee: emp._id,
         date,
-        status
+        status: bulkStatus[emp._id] || "Present"
       })
-      console.log("DEBUG: markAttendance Response:", res.data);
+    )
+    try {
+      await Promise.all(promises)
       await fetchAttendance()
-      alert("Success! Attendance marked.");
+      alert("Success! Attendance marked for all employees.")
     } catch (err) {
-      console.error("DEBUG: markAttendance Error:", err);
-      alert("Error: " + (err.response?.data?.message || err.message));
+      alert("Error: " + (err.response?.data?.message || err.message))
     }
   }
 
@@ -149,7 +153,7 @@ export default function Attendance() {
         {/* MARK ATTENDANCE */}
 
 
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           {/* Department Select */}
           <select
             className="w-full bg-black/50 border border-white/10 text-white px-4 py-2.5 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all appearance-none"
@@ -159,21 +163,6 @@ export default function Attendance() {
             <option value="" className="bg-black">Select Department</option>
             {departments.map(dep => (
               <option key={dep} value={dep} className="bg-black">{dep}</option>
-            ))}
-          </select>
-
-          {/* Employee Select (filtered by department) */}
-          <select
-            className="w-full bg-black/50 border border-white/10 text-white px-4 py-2.5 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all appearance-none"
-            value={employee}
-            onChange={e => setEmployee(e.target.value)}
-            disabled={!selectedDepartment}
-          >
-            <option value="" className="bg-black">Select Employee</option>
-            {employees.map(emp => (
-              <option key={emp._id} value={emp._id} className="bg-black">
-                {emp.employeeId} - {emp.name}
-              </option>
             ))}
           </select>
 
@@ -189,26 +178,49 @@ export default function Attendance() {
             onChange={e => setDate(e.target.value)}
           />
 
-          {/* Status select */}
-          <select
-            className="w-full bg-black/50 border border-white/10 text-white px-4 py-2.5 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all appearance-none"
-            value={status}
-            onChange={e => setStatus(e.target.value)}
-          >
-            <option className="bg-black">Present</option>
-            <option className="bg-black">Absent</option>
-            <option className="bg-black">Leave</option>
-          </select>
-
-          {/* Mark button */}
+          {/* Bulk Mark button */}
           <button
-            onClick={handleMark}
+            onClick={handleBulkMark}
             className="w-full bg-blue-600 text-white font-semibold py-2.5 rounded-xl hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] transition-all transform hover:-translate-y-0.5"
-            disabled={!employee || !selectedDepartment}
+            disabled={!selectedDepartment || employees.length === 0 || !date}
           >
-            Mark
+            Mark Attendance for All
           </button>
         </div>
+
+        {/* Employee List for Bulk Marking */}
+        {selectedDepartment && employees.length > 0 && (
+          <div className="w-full mb-6">
+            <table className="min-w-full text-left border-collapse">
+              <thead className="bg-white/5 border-b border-white/10">
+                <tr>
+                  <th className="p-4 text-gray-400 font-semibold text-sm tracking-wide">Employee ID</th>
+                  <th className="p-4 text-gray-400 font-semibold text-sm tracking-wide">Name</th>
+                  <th className="p-4 text-gray-400 font-semibold text-sm tracking-wide">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/10 bg-white/[0.02]">
+                {employees.map(emp => (
+                  <tr key={emp._id} className="hover:bg-white/5 transition-colors">
+                    <td className="p-4 text-gray-300 font-medium whitespace-nowrap">{emp.employeeId}</td>
+                    <td className="p-4 text-gray-300 whitespace-nowrap">{emp.name}</td>
+                    <td className="p-4 whitespace-nowrap">
+                      <select
+                        className="bg-black/50 border border-white/10 text-white px-2 py-1 rounded-xl focus:outline-none"
+                        value={bulkStatus[emp._id] || "Present"}
+                        onChange={e => setBulkStatus(prev => ({ ...prev, [emp._id]: e.target.value }))}
+                      >
+                        <option value="Present">Present</option>
+                        <option value="Absent">Absent</option>
+                        <option value="Leave">Leave</option>
+                      </select>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
 
         {/* TABLE */}
 
