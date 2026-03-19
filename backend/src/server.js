@@ -7,6 +7,10 @@ import { connectDB } from "./config/db.js"
 import authRoutes from "./routes/authRoutes.js"
 app.use("/api/auth", authRoutes)
 
+import otpRoutes from "./routes/otpRoutes.js"
+// Integration hook: OTP auth stays isolated under its own route group.
+app.use("/api/auth/otp", otpRoutes)
+
 import attendanceRoutes from "./routes/attendanceRoutes.js"
 app.use("/api/attendance", attendanceRoutes)
 

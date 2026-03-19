@@ -10,11 +10,7 @@ app.use((req, res, next) => {
   next();
 });
 
-const corsOptions = {
-  origin: (origin, callback) => callback(null, origin || true),
-  credentials: true,
-};
-app.use(cors(corsOptions))
+app.use(cors())
 app.use(express.json())
 
 // 👇 THIS LINE IS CRITICAL
