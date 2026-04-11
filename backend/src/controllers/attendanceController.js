@@ -1,119 +1,131 @@
-import Attendance from "../models/attendanceModel.js"
-import Employee from "../models/Employee.js"
-import sendEmail from "../utils/sendEmail.js"
+import Company from "../models/Company.js";
+import sendEmail from "../utils/sendEmail.js";
 
 // Mark Attendance
 export const markAttendance = async (req, res) => {
-  const { employee, date, status } = req.body
-  console.log(`[Attendance] Incoming "Mark" -> Employee: ${employee}, Status: ${status}, Date: ${date}`);
-
+  const { employee: employeeId, date, status } = req.body;
+  
   try {
-    if (!employee || !date || !status) {
-        console.warn(`[Attendance] Missing fields in request: emp=${employee}, date=${date}, status=${status}`);
-        return res.status(400).json({ message: "Missing required fields" });
-    }
+    const company = await Company.findById(req.user.companyId);
+    if (!company) return res.status(404).json({ message: "Company not found" });
 
-    // Parse date safely
-    let selectedDate = new Date(date);
-    if (isNaN(selectedDate.getTime())) {
-        // Try parsing with T00:00:00Z explicitly
-        selectedDate = new Date(date + "T00:00:00Z");
-    }
+    // Validate employee exists in this company
+    const employee = company.employees.id(employeeId);
+    if (!employee) return res.status(404).json({ message: "Employee not found in this company" });
 
-    if (isNaN(selectedDate.getTime())) {
-        console.error(`[Attendance] Invalid date received: ${date}`);
-        return res.status(400).json({ message: "Invalid date format" });
-    }
+    // Parse date and normalize to midnight UTC for comparison
+    const selectedDate = new Date(date);
+    selectedDate.setUTCHours(0, 0, 0, 0);
 
-    const startOfDay = new Date(selectedDate);
-    startOfDay.setUTCHours(0, 0, 0, 0);
-    
-    const endOfDay = new Date(selectedDate);
-    endOfDay.setUTCHours(23, 59, 59, 999);
-
-    console.log(`[Attendance] Querying between ${startOfDay.toISOString()} and ${endOfDay.toISOString()}`);
-
-    const existing = await Attendance.findOne({
-      employee,
-      date: { $gte: startOfDay, $lte: endOfDay }
-    })
+    // Check if attendance already exists for this day
+    const existing = company.attendance.find(att => 
+        att.employeeId.toString() === employeeId && 
+        new Date(att.date).setUTCHours(0,0,0,0) === selectedDate.getTime()
+    );
 
     if (existing) {
-      console.log(`[Attendance] Existing found (${existing.status}). Updating to ${status}...`);
-      if (existing.status !== "Absent" && status === "Absent") {
-        const emp = await Employee.findById(employee)
-        if (emp) {
-          await sendEmail({
-            email: emp.email,
+      const oldStatus = existing.status;
+      existing.status = status;
+      
+      if (oldStatus !== "Absent" && status === "Absent") {
+        await sendEmail({
+            email: employee.email,
             subject: "Attendance Notification: Marked Absent",
-            message: `Dear ${emp.name},\n\nYou have been marked as absent for ${new Date(date).toLocaleDateString()}.\n\nRegards,\nHR Department`
-          })
-        }
+            message: `Dear ${employee.name},\n\nYou have been marked as absent for ${selectedDate.toLocaleDateString()}.\n\nRegards,\nHR Department`
+        });
       }
-      existing.status = status
-      await existing.save()
-      return res.json(existing)
+      
+      await company.save();
+      return res.json(existing);
     }
 
-    console.log(`[Attendance] Creating NEW record...`);
-    const attendance = await Attendance.create({ employee, date, status })
+    // Create new attendance record
+    const newAttendance = {
+        employeeId,
+        date: selectedDate,
+        status
+    };
+
+    company.attendance.push(newAttendance);
+    
     if (status === "Absent") {
-      const emp = await Employee.findById(employee)
-      if (emp) {
         await sendEmail({
-          email: emp.email,
-          subject: "Attendance Notification: Marked Absent",
-          message: `Dear ${emp.name},\n\nYou have been marked as absent for ${new Date(date).toLocaleDateString()}.\n\nRegards,\nHR Department`
-        })
-      }
+            email: employee.email,
+            subject: "Attendance Notification: Marked Absent",
+            message: `Dear ${employee.name},\n\nYou have been marked as absent for ${selectedDate.toLocaleDateString()}.\n\nRegards,\nHR Department`
+        });
     }
-    res.status(201).json(attendance)
+
+    await company.save();
+    res.status(201).json(company.attendance[company.attendance.length - 1]);
   } catch (err) {
-    console.error(`[Attendance] Controller Failure: ${err.message}`);
-    res.status(500).json({ message: err.message })
+    res.status(500).json({ message: err.message });
   }
 }
 
 // Get Attendance Records
 export const getAttendance = async (req, res) => {
   try {
-    const records = await Attendance.find().populate("employee", "employeeId name")
-    res.json(records)
+    const company = await Company.findById(req.user.companyId);
+    
+    // Manually "populate" employee info since they are in the same doc
+    const enrichedRecords = company.attendance.map(att => {
+        const emp = company.employees.id(att.employeeId);
+        return {
+            ...att.toObject(),
+            employee: emp ? { _id: emp._id, name: emp.name, employeeId: emp.employeeId } : null
+        };
+    });
+
+    res.json(enrichedRecords);
   } catch (err) {
-    res.status(500).json({ message: err.message })
+    res.status(500).json({ message: err.message });
   }
 }
 
-// Update Attendance
+// Update Attendance (Directly by ID)
 export const updateAttendance = async (req, res) => {
-  console.log(`[Attendance] Incoming "Update" -> ID: ${req.params.id}, New Status: ${req.body.status}`);
   try {
-    const original = await Attendance.findById(req.params.id)
-    const updated = await Attendance.findByIdAndUpdate(req.params.id, req.body, { new: true })
+    const company = await Company.findById(req.user.companyId);
+    const attendance = company.attendance.id(req.params.id);
 
-    if (original && original.status !== "Absent" && updated.status === "Absent") {
-      const emp = await Employee.findById(updated.employee)
+    if (!attendance) return res.status(404).json({ message: "Attendance record not found" });
+
+    const oldStatus = attendance.status;
+    const newStatus = req.body.status;
+    
+    attendance.status = newStatus;
+
+    if (oldStatus !== "Absent" && newStatus === "Absent") {
+      const emp = company.employees.id(attendance.employeeId);
       if (emp) {
         await sendEmail({
           email: emp.email,
           subject: "Attendance Notification: Marked Absent",
-          message: `Dear ${emp.name},\n\nYou have been marked as absent for ${new Date(updated.date).toLocaleDateString()}.\n\nRegards,\nHR Department`
-        })
+          message: `Dear ${emp.name},\n\nYou have been marked as absent for ${new Date(attendance.date).toLocaleDateString()}.\n\nRegards,\nHR Department`
+        });
       }
     }
-    res.json(updated)
+
+    await company.save();
+    res.json(attendance);
   } catch (err) {
-    console.error(`[Attendance] Update Failure: ${err.message}`);
-    res.status(500).json({ message: err.message })
+    res.status(500).json({ message: err.message });
   }
 }
 
 // Delete Attendance
 export const deleteAttendance = async (req, res) => {
   try {
-    await Attendance.findByIdAndDelete(req.params.id)
-    res.json({ message: "Deleted" })
+    const company = await Company.findById(req.user.companyId);
+    const attendance = company.attendance.id(req.params.id);
+    
+    if (!attendance) return res.status(404).json({ message: "Record not found" });
+    
+    attendance.deleteOne();
+    await company.save();
+    res.json({ message: "Attendance record deleted" });
   } catch (err) {
-    res.status(500).json({ message: err.message })
+    res.status(500).json({ message: err.message });
   }
 }

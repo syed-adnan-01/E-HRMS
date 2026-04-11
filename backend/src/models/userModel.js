@@ -9,7 +9,9 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    lowercase: true,
+    trim: true
   },
 
   password: {
@@ -19,9 +21,17 @@ const userSchema = new mongoose.Schema({
 
   role: {
     type: String,
-    enum: ["ADMIN", "HR", "MANAGER", "EMPLOYEE"],
-    default: "ADMIN"
+    enum: ["SUPERADMIN", "ADMIN", "HR", "MANAGER", "EMPLOYEE"],
+    default: "EMPLOYEE"
+  },
+  
+  companyId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Company",
+    required: false // Optional for superadmins, required for HR/Managers
   }
+}, {
+  timestamps: true
 })
 
 export default mongoose.model("User", userSchema)
