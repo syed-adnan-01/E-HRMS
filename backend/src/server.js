@@ -16,6 +16,9 @@ app.use("/api/payroll", payrollRoutes)
 import reportRoutes from "./routes/reportRoutes.js"
 app.use("/api/reports", reportRoutes)
 
+import adminRoutes from "./routes/adminRoutes.js"
+app.use("/api/admin", adminRoutes)
+
 const PORT = process.env.PORT || 5000
 
 // We wrap startup in an async function to ensure DB is ready before server accepts requests

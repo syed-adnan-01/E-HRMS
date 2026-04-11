@@ -1,7 +1,31 @@
+import { useState } from "react"
 import { useNavigate } from "react-router-dom"
+import api from "../api/axios"
 
 export default function LandingPage() {
     const navigate = useNavigate()
+    const [adminData, setAdminData] = useState({
+        name: '',
+        email: '',
+        companyName: ''
+    })
+    const [loading, setLoading] = useState(false)
+
+    const handleAdminRegister = async (e) => {
+        e.preventDefault()
+        setLoading(true)
+        try {
+            const response = await api.post("/admin/register", adminData)
+            alert(response.data.message || "Registration request sent successfully!")
+            setAdminData({ name: '', email: '', companyName: '' })
+        } catch (error) {
+            console.error("Registration error:", error)
+            alert(error.response?.data?.message || "Failed to submit registration request. Please try again.")
+        } finally {
+            setLoading(false)
+        }
+    }
+
     const handleGetStarted = () => {
         navigate('/login')
     }
@@ -199,6 +223,78 @@ export default function LandingPage() {
                                    </p>
                                </div>
                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Admin Registration Section */}
+                <div id="admin-register" className="relative z-10 container mx-auto px-6 mt-32 pb-20 max-w-4xl">
+                    <div className="relative p-8 md:p-12 rounded-[2.5rem] bg-gradient-to-b from-white/[0.08] to-transparent border border-white/10 backdrop-blur-2xl overflow-hidden shadow-2xl">
+                        {/* Decorative background elements with glow effects */}
+                        <div className="absolute -top-24 -right-24 w-64 h-64 bg-blue-600/20 rounded-full blur-[80px]"></div>
+                        <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-cyan-600/10 rounded-full blur-[80px]"></div>
+
+                        <div className="relative z-10">
+                            <div className="text-center mb-10">
+                                <h2 className="text-3xl md:text-5xl font-bold text-white mb-4 tracking-tight">Register as Admin</h2>
+                                <p className="text-gray-400 text-lg">Launch your company's WorkSphere workspace in seconds.</p>
+                            </div>
+
+                            <form onSubmit={handleAdminRegister} className="space-y-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-semibold text-gray-300 ml-1">Full Name</label>
+                                        <input 
+                                            type="text"
+                                            required
+                                            placeholder="Enter Your Name"
+                                            value={adminData.name}
+                                            onChange={(e) => setAdminData({...adminData, name: e.target.value})}
+                                            className="w-full px-5 py-4 rounded-2xl bg-white/5 border border-white/10 text-white placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all font-medium"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-semibold text-gray-300 ml-1">Email Address</label>
+                                        <input 
+                                            type="email"
+                                            required
+                                            placeholder="Enter Your Email Address"
+                                            value={adminData.email}
+                                            onChange={(e) => setAdminData({...adminData, email: e.target.value})}
+                                            className="w-full px-5 py-4 rounded-2xl bg-white/5 border border-white/10 text-white placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all font-medium"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-sm font-semibold text-gray-300 ml-1">Company Name</label>
+                                    <input 
+                                        type="text"
+                                        required
+                                        placeholder="Enter Your Company Name"
+                                        value={adminData.companyName}
+                                        onChange={(e) => setAdminData({...adminData, companyName: e.target.value})}
+                                        className="w-full px-5 py-4 rounded-2xl bg-white/5 border border-white/10 text-white placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all font-medium"
+                                    />
+                                </div>
+
+                                <button 
+                                    type="submit"
+                                    disabled={loading}
+                                    className={`w-full py-4 mt-6 bg-gradient-to-br from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-bold text-lg rounded-2xl shadow-lg shadow-blue-500/25 transition-all duration-300 transform hover:-translate-y-1 active:scale-[0.98] ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                                >
+                                    {loading ? (
+                                        <span className="flex items-center justify-center gap-2">
+                                            <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                            Processing...
+                                        </span>
+                                    ) : 'Register Workspace'}
+                                </button>
+                            </form>
+                            
+                            <p className="text-center mt-8 text-sm text-gray-500">
+                                By registering, you agree to our <a href="#" className="text-blue-400 hover:underline">Terms of Service</a> and <a href="#" className="text-blue-400 hover:underline">Privacy Policy</a>.
+                            </p>
                         </div>
                     </div>
                 </div>
