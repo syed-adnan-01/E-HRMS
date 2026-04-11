@@ -1,90 +1,163 @@
-import Employee from "../models/Employee.js"
-import Attendance from "../models/attendanceModel.js"
-import Payroll from "../models/Payroll.js"
+import Company from "../models/Company.js";
+import User from "../models/userModel.js";
+import bcrypt from "bcryptjs";
+
+// Helper to get company with correct context
+const getOwnCompany = async (companyId) => {
+    const company = await Company.findById(companyId);
+    if (!company) throw new Error("Company not found");
+    return company;
+};
 
 export const createEmployee = async (req, res) => {
   try {
-    const employee = await Employee.create(req.body)
-    res.status(201).json(employee)
+    const company = await getOwnCompany(req.user.companyId);
+    
+    // Check for duplicate employeeId within THIS company
+    const existing = company.employees.find(emp => emp.employeeId === req.body.employeeId);
+    if (existing) {
+        return res.status(400).json({ message: "Employee ID already exists in your company" });
+    }
+
+    // Restrict roles as per requirement: only HR or Manager for now
+    if (!["HR", "MANAGER"].includes(req.body.role)) {
+        return res.status(400).json({ message: "Only HR or Manager roles can be created at this time" });
+    }
+
+    company.employees.push(req.body);
+    await company.save();
+    
+    // Return the newly created employee (last one in array)
+    res.status(201).json(company.employees[company.employees.length - 1]);
   } catch (error) {
-
-    // Duplicate Key Error
-    if (error.code === 11000) {
-      return res.status(400).json({
-        message: `${Object.keys(error.keyValue)} already exists`,
-      })
-    }
-
-    // Validation Errors
-    if (error.name === "ValidationError") {
-      const messages = Object.values(error.errors).map(
-        val => val.message
-      )
-      return res.status(400).json({ message: messages.join(", ") })
-    }
-
-    res.status(500).json({ message: error.message })
+    res.status(500).json({ message: error.message });
   }
-}
+};
 
+export const createStaff = async (req, res) => {
+  try {
+    const { name, email, employeeId, department, role, password } = req.body;
 
-// Get all employees or filter by department
+    if (req.user.role !== "ADMIN") {
+        return res.status(403).json({ message: "Only Admins can create HR or Managers" });
+    }
+
+    if (!["HR", "MANAGER"].includes(role)) {
+        return res.status(400).json({ message: "Only HR or Manager roles can be created here" });
+    }
+
+    const company = await getOwnCompany(req.user.companyId);
+    
+    // Check for duplicate employeeId or email within THIS company
+    const existing = company.employees.find(emp => emp.employeeId === employeeId || emp.email === email);
+    if (existing) {
+        return res.status(400).json({ message: "Employee ID or Email already exists in your company" });
+    }
+
+    // Check if user already exists in Auth collection
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+        return res.status(400).json({ message: "A user with this email already exists" });
+    }
+
+    // 1. Add to Company Employees array
+    company.employees.push({
+        employeeId,
+        name,
+        email,
+        department,
+        role,
+        status: "Active"
+    });
+    await company.save();
+
+    // 2. Create User record for login
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password || "WorkSphere@2026", salt);
+
+    const newUser = new User({
+        name,
+        email,
+        password: hashedPassword,
+        role,
+        companyId: req.user.companyId
+    });
+    await newUser.save();
+    
+    res.status(201).json(company.employees[company.employees.length - 1]);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 export const getEmployees = async (req, res) => {
   try {
     const { department } = req.query;
-    let query = {};
+    const company = await Company.findById(req.user.companyId).select('employees');
+    
+    let employees = company.employees;
     if (department) {
-      query.department = department;
+      employees = employees.filter(emp => emp.department === department);
     }
-    const employees = await Employee.find(query).sort({ employeeId: 1 });
+    
     res.json(employees);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-}
+};
 
 export const getEmployeeById = async (req, res) => {
-  const employee = await Employee.findById(req.params.id)
-  if (!employee) {
-    return res.status(404).json({ message: "Employee not found" })
+  try {
+    const company = await Company.findById(req.user.companyId);
+    const employee = company.employees.id(req.params.id);
+    
+    if (!employee) {
+      return res.status(404).json({ message: "Employee not found" });
+    }
+    res.json(employee);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
-  res.json(employee)
-}
+};
 
 export const updateEmployee = async (req, res) => {
   try {
-    const employee = await Employee.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true, runValidators: true }
-    )
+    const company = await Company.findById(req.user.companyId);
+    const employee = company.employees.id(req.params.id);
 
     if (!employee) {
-      return res.status(404).json({ message: "Employee not found" })
+      return res.status(404).json({ message: "Employee not found" });
     }
 
-    res.json(employee)
+    // Update fields
+    Object.assign(employee, req.body);
+    await company.save();
+
+    res.json(employee);
   } catch (error) {
-    res.status(400).json({ message: error.message })
+    res.status(400).json({ message: error.message });
   }
-}
+};
 
 export const deleteEmployee = async (req, res) => {
   try {
-    const { id } = req.params
+    const company = await Company.findById(req.user.companyId);
+    
+    // Remove the employee subdocument
+    const employee = company.employees.id(req.params.id);
+    if (!employee) {
+        return res.status(404).json({ message: "Employee not found" });
+    }
+    
+    employee.deleteOne(); // Mongoose subdocument method
+    
+    // Also cleanup linked attendance and payrolls within the same document
+    company.attendance = company.attendance.filter(att => att.employeeId.toString() !== req.params.id);
+    company.payrolls = company.payrolls.filter(pay => pay.employeeId.toString() !== req.params.id);
 
-    // delete employee
-    await Employee.findByIdAndDelete(id)
-
-    // delete attendance linked to employee
-    await Attendance.deleteMany({ employee: id })
-
-    // delete payroll linked to employee
-    await Payroll.deleteMany({ employee: id })
-
-    res.json({ message: "Employee and related records deleted" })
-
+    await company.save();
+    res.json({ message: "Employee and related records deleted successfully" });
   } catch (err) {
-    res.status(500).json({ message: err.message })
+    res.status(500).json({ message: err.message });
   }
-}
+};

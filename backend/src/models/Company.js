@@ -1,0 +1,124 @@
+import mongoose from "mongoose";
+
+// Sub-schema for Employee
+const employeeSchema = new mongoose.Schema({
+  employeeId: {
+    type: String,
+    required: [true, "Employee ID is required"],
+    trim: true,
+  },
+  name: {
+    type: String,
+    required: [true, "Name is required"],
+    trim: true,
+  },
+  email: {
+    type: String,
+    required: [true, "Email is required"],
+    lowercase: true,
+    trim: true,
+  },
+  department: {
+    type: String,
+    required: [true, "Department is required"],
+  },
+  role: {
+    type: String,
+    required: [true, "Role is required"],
+  },
+  status: {
+    type: String,
+    enum: ["Active", "Inactive"],
+    default: "Active",
+  }
+}, { timestamps: true });
+
+// Sub-schema for Attendance
+const attendanceSchema = new mongoose.Schema({
+  employeeId: {
+    type: mongoose.Schema.Types.ObjectId, // Reference to internal employee _id
+    required: true
+  },
+  date: {
+    type: Date,
+    required: true
+  },
+  status: {
+    type: String,
+    enum: ["Present", "Absent", "Leave"],
+    default: "Present"
+  }
+}, { timestamps: true });
+
+// Sub-schema for Payroll
+const payrollSchema = new mongoose.Schema({
+  employeeId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true
+  },
+  month: {
+    type: String,
+    required: true
+  },
+  basicSalary: {
+    type: Number,
+    required: true
+  },
+  allowances: {
+    type: Number,
+    default: 0
+  },
+  deductions: {
+    type: Number,
+    default: 0
+  },
+  netSalary: {
+    type: Number
+  }
+}, { timestamps: true });
+
+// Sub-schema for Saved Reports
+const reportSchema = new mongoose.Schema({
+  title: String,
+  type: String,
+  data: mongoose.Schema.Types.Mixed,
+  generatedBy: String
+}, { timestamps: true });
+
+// Main Company Schema
+const companySchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: [true, "Company name is required"],
+      unique: true,
+      trim: true,
+    },
+    email: {
+      type: String,
+      required: [true, "Company email is required"],
+      unique: true,
+      lowercase: true,
+    },
+    adminName: {
+      type: String,
+      required: [true, "Admin name is required"],
+    },
+    status: {
+      type: String,
+      enum: ["Active", "Inactive", "Suspended"],
+      default: "Active",
+    },
+    
+    // Embedded Sub-collections
+    employees: [employeeSchema],
+    attendance: [attendanceSchema],
+    payrolls: [payrollSchema],
+    reports: [reportSchema],
+  },
+  {
+    timestamps: true,
+  }
+);
+
+export default mongoose.model("Company", companySchema);

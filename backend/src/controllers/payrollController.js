@@ -1,66 +1,81 @@
-import Payroll from "../models/Payroll.js"
+import Company from "../models/Company.js";
 
 export const createPayroll = async (req, res) => {
-
   try {
+    const { employee: employeeId, month, basicSalary, allowances, deductions } = req.body;
+    const company = await Company.findById(req.user.companyId);
+    
+    if (!company) return res.status(404).json({ message: "Company not found" });
 
-    const { employee, month, basicSalary, allowances, deductions } = req.body
+    const netSalary = Number(basicSalary) + Number(allowances) - Number(deductions);
 
-    const netSalary = Number(basicSalary) + Number(allowances) - Number(deductions)
-
-
-    const payroll = await Payroll.create({
-      employee,
+    const newPayroll = {
+      employeeId,
       month,
       basicSalary,
       allowances,
       deductions,
       netSalary
-    })
+    };
 
-    res.status(201).json(payroll)
+    company.payrolls.push(newPayroll);
+    await company.save();
 
+    res.status(201).json(company.payrolls[company.payrolls.length - 1]);
   } catch (err) {
-
-    res.status(500).json({ message: err.message })
-
+    res.status(500).json({ message: err.message });
   }
 }
 
-
 export const getPayroll = async (req, res) => {
+  try {
+    const company = await Company.findById(req.user.companyId);
+    
+    const enrichedPayrolls = company.payrolls.map(pay => {
+        const emp = company.employees.id(pay.employeeId);
+        return {
+            ...pay.toObject(),
+            employee: emp ? { _id: emp._id, name: emp.name, employeeId: emp.employeeId } : null
+        };
+    });
 
-  const payroll = await Payroll.find()
-    .populate("employee", "employeeId name")
-
-  res.json(payroll)
+    res.json(enrichedPayrolls);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 }
-
 
 export const updatePayroll = async (req, res) => {
+  try {
+    const { basicSalary, allowances, deductions } = req.body;
+    const company = await Company.findById(req.user.companyId);
+    const payroll = company.payrolls.id(req.params.id);
 
-  const { basicSalary, allowances, deductions } = req.body
+    if (!payroll) return res.status(404).json({ message: "Payroll record not found" });
 
-  const netSalary = Number(basicSalary) + Number(allowances) - Number(deductions)
+    payroll.basicSalary = basicSalary;
+    payroll.allowances = allowances;
+    payroll.deductions = deductions;
+    payroll.netSalary = Number(basicSalary) + Number(allowances) - Number(deductions);
 
-  const updated = await Payroll.findByIdAndUpdate(
-    req.params.id,
-    {
-      basicSalary,
-      allowances,
-      deductions,
-      netSalary
-    },
-    { new: true }
-  )
-
-  res.json(updated)
+    await company.save();
+    res.json(payroll);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 }
 
-
 export const deletePayroll = async (req, res) => {
-
-  await Payroll.findByIdAndDelete(req.params.id)
-
-  res.json({ message: "Payroll Deleted" })
+  try {
+    const company = await Company.findById(req.user.companyId);
+    const payroll = company.payrolls.id(req.params.id);
+    
+    if (!payroll) return res.status(404).json({ message: "Record not found" });
+    
+    payroll.deleteOne();
+    await company.save();
+    res.json({ message: "Payroll Deleted" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 }

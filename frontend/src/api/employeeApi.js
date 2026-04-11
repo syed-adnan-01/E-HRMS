@@ -12,6 +12,9 @@ export const getEmployees = (department) => {
 export const addEmployee = (data) =>
   api.post("/employees", data)
 
+export const addStaff = (data) =>
+  api.post("/employees/create-staff", data)
+
 export const updateEmployee = (id, data) =>
   api.put(`/employees/${id}`, data)
 

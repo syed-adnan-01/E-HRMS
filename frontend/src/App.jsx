@@ -14,6 +14,8 @@ const Employees = lazy(() => import("./pages/hr/Employees"))
 const Attendance = lazy(() => import("./pages/hr/Attendance"))
 const Payroll = lazy(() => import("./pages/hr/Payroll"))
 const Reports = lazy(() => import("./pages/hr/Reports"))
+const SuperAdminDashboard = lazy(() => import("./pages/SuperAdminDashboard"))
+const ManageStaff = lazy(() => import("./pages/admin/ManageStaff"))
 
 export default function App() {
 
@@ -26,8 +28,6 @@ export default function App() {
         <Routes>
 
           <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-
           <Route path="/" element={<LandingPage />} />
 
           <Route
@@ -71,6 +71,22 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <Reports />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/superadmin-dashboard"
+            element={
+              <ProtectedRoute roles={["SUPERADMIN"]}>
+                <SuperAdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/manage-staff"
+            element={
+              <ProtectedRoute roles={["ADMIN"]}>
+                <ManageStaff />
               </ProtectedRoute>
             }
           />

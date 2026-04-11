@@ -6,17 +6,22 @@ export const loginUser = async (req, res) => {
   const { email, password } = req.body
 
   try {
-
-    const user = await User.findOne({ email })
-    if (!user)
+    const searchEmail = email.toLowerCase().trim()
+    console.log(`[AUTH] Searching for user: ${searchEmail}`)
+    const user = await User.findOne({ email: searchEmail })
+    
+    if (!user) {
+      console.warn(`[AUTH] User not found: ${searchEmail}`)
       return res.status(400).json({ message: "User not found" })
+    }
 
+    // Check password
     const isMatch = await bcrypt.compare(password, user.password)
     if (!isMatch)
       return res.status(400).json({ message: "Invalid credentials" })
 
     const token = jwt.sign(
-      { id: user._id, role: user.role },
+      { id: user._id, role: user.role, companyId: user.companyId },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     )
@@ -24,7 +29,8 @@ export const loginUser = async (req, res) => {
     res.json({
       token,
       role: user.role,
-      name: user.name
+      name: user.name,
+      companyId: user.companyId
     })
 
   } catch (err) {
@@ -36,32 +42,26 @@ export const registerUser = async (req, res) => {
   const { name, email, password, role } = req.body
 
   try {
-    const userExists = await User.findOne({ email })
-    if (userExists) {
+    const normalizedEmail = email.toLowerCase().trim()
+    const existing = await User.findOne({ email: normalizedEmail })
+    if (existing) {
       return res.status(400).json({ message: "User already exists" })
     }
 
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(password, salt)
 
-    const user = await User.create({
+    const newUser = new User({
       name,
-      email,
+      email: normalizedEmail,
       password: hashedPassword,
       role: role || "EMPLOYEE"
     })
 
-    if (user) {
-      res.status(201).json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role
-      })
-    } else {
-      res.status(400).json({ message: "Invalid user data" })
-    }
+    await newUser.save()
+    res.status(201).json({ message: "User registered successfully" })
   } catch (err) {
     res.status(500).json({ message: err.message })
   }
 }
+

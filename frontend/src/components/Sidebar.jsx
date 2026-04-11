@@ -8,6 +8,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
     { name: "Dashboard", path: "/dashboard", roles: ["ADMIN", "HR", "MANAGER"] },
     { name: "Employees", path: "/employees", roles: ["ADMIN", "HR"] },
     { name: "Attendance", path: "/attendance", roles: ["ADMIN", "HR", "MANAGER"] },
+    { name: "Manage Staff", path: "/admin/manage-staff", roles: ["ADMIN"] },
     { name: "Payroll", path: "/payroll", roles: ["ADMIN", "HR"] },
     { name: "Reports", path: "/reports", roles: ["ADMIN", "HR"] },
   ]

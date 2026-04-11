@@ -35,8 +35,12 @@ export default function Login() {
         name: res.data.name
       })
 
-      // Redirect to Dashboard
-      navigate("/dashboard")
+      // Redirect based on role
+      if (res.data.role === "SUPERADMIN") {
+        navigate("/superadmin-dashboard")
+      } else {
+        navigate("/dashboard")
+      }
 
     } catch (err) {
       setError(err.response?.data?.message || "Login Failed")
@@ -58,9 +62,9 @@ export default function Login() {
       >
         <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-white tracking-tight mb-2">
-            Welcome Back
+            WorkSphere Portal
             </h2>
-            <p className="text-gray-400 text-sm">Login to WorkSphere</p>
+            <p className="text-gray-400 text-sm">HR & Manager Secure Login</p>
         </div>
 
         {error && (
@@ -71,7 +75,7 @@ export default function Login() {
 
         <input
           type="email"
-          placeholder="Email address"
+          placeholder="Corporate email"
           className="w-full bg-black/50 border border-white/10 text-white placeholder-gray-500 px-4 py-3.5 mb-4 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -91,13 +95,11 @@ export default function Login() {
           type="submit"
           className="w-full bg-blue-600 text-white font-semibold py-3.5 rounded-xl hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] transition-all transform hover:-translate-y-0.5"
         >
-          Sign In
+          Access Portal
         </button>
 
         <div className="mt-8 text-center">
-          <Link to="/register" className="text-sm text-gray-400 hover:text-white transition-colors">
-            Don't have an account? <span className="text-blue-400">Register here</span>
-          </Link>
+            <p className="text-xs text-gray-500 uppercase tracking-widest font-medium">Authorized Personnel Only</p>
         </div>
 
       </form>
