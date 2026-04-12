@@ -16,6 +16,7 @@ const Payroll = lazy(() => import("./pages/hr/Payroll"))
 const Reports = lazy(() => import("./pages/hr/Reports"))
 const SuperAdminDashboard = lazy(() => import("./pages/SuperAdminDashboard"))
 const ManageStaff = lazy(() => import("./pages/admin/ManageStaff"))
+const SuperLogin = lazy(() => import("./pages/auth/SuperLogin"))
 
 export default function App() {
 
@@ -28,6 +29,7 @@ export default function App() {
         <Routes>
 
           <Route path="/login" element={<Login />} />
+          <Route path="/super-login" element={<SuperLogin />} />
           <Route path="/" element={<LandingPage />} />
 
           <Route

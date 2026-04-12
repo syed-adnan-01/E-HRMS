@@ -26,6 +26,13 @@ export default function Login() {
         password
       })
 
+      // Block Super Admin from regular login
+      if (res.data.role === "SUPERADMIN") {
+        setError("Access Denied.")
+        setLoading(false)
+        return
+      }
+
       // Store JWT Token
       localStorage.setItem("token", res.data.token)
 
@@ -36,11 +43,7 @@ export default function Login() {
       })
 
       // Redirect based on role
-      if (res.data.role === "SUPERADMIN") {
-        navigate("/superadmin-dashboard")
-      } else {
-        navigate("/dashboard")
-      }
+      navigate("/dashboard")
 
     } catch (err) {
       setError(err.response?.data?.message || "Login Failed")
