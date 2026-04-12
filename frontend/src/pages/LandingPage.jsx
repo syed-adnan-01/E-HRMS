@@ -239,7 +239,7 @@ export default function LandingPage() {
                             <a href="#" className="hover:text-white transition-colors">Privacy</a>
                             <a href="#" className="hover:text-white transition-colors">Terms</a>
                             <a href="#" className="hover:text-white transition-colors">Support</a>
-                            <Link to="/super-login" className="text-primary hover:underline">Internal Portal</Link>
+                            <Link to="/super-login" className="text-primary hover:underline">Super Admin Portal</Link>
                         </div>
                         <p className="text-slate-600 text-xs">
                             © {new Date().getFullYear()} WorkSphere Engineering.
