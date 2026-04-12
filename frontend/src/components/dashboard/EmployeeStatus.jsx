@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react"
 import Card from "../ui/Card"
 import { getEmployeeStatus } from "../../api/dashboardApi"
+import { motion } from "framer-motion"
+import { Activity, ShieldOff } from "lucide-react"
 
 export default function EmployeeStatus() {
   const [active, setActive] = useState(0)
@@ -26,43 +28,63 @@ export default function EmployeeStatus() {
   const inactivePercent = total ? (inactive / total) * 100 : 0
 
   return (
-    <Card>
-      <h2 className="text-xl font-bold text-white mb-6 tracking-tight">
-        Employee Status
-      </h2>
-
-      <div className="mb-6">
-        <div className="flex justify-between items-end mb-2">
-            <p className="text-gray-300 font-medium">Active</p>
-            <p className="text-emerald-400 font-semibold text-sm">
-            {activePercent.toFixed(0)}%
-            </p>
-        </div>
-        <div className="w-full bg-white/10 h-2.5 rounded-full overflow-hidden">
-          <div
-            className="bg-gradient-to-r from-emerald-500 to-green-400 h-full rounded-full relative"
-            style={{ width: `${activePercent}%` }}
-          >
-             {/* Glow effect on progress bar */}
-             <div className="absolute top-0 right-0 bottom-0 w-4 bg-white/30 blur-[2px]"></div>
-          </div>
-        </div>
+    <Card className="h-full">
+      <div className="flex items-center justify-between mb-10">
+        <h2 className="text-xl font-bold text-white tracking-tight font-heading">
+          Workforce Health
+        </h2>
+        <Activity size={20} className="text-primary opacity-50" />
       </div>
 
-      <div>
-        <div className="flex justify-between items-end mb-2">
-            <p className="text-gray-300 font-medium">Inactive</p>
-            <p className="text-gray-400 font-medium text-sm">
-            {inactivePercent.toFixed(0)}%
+      <div className="space-y-10">
+        <div className="group">
+          <div className="flex justify-between items-end mb-4">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
+              <p className="text-sm font-bold text-slate-300 uppercase tracking-widest">Active Staff</p>
+            </div>
+            <p className="text-xl font-bold text-white font-heading">
+              {active} <span className="text-xs text-slate-500 font-medium ml-1">({activePercent.toFixed(0)}%)</span>
             </p>
+          </div>
+          <div className="w-full bg-white/5 h-3 rounded-full overflow-hidden p-[2px] border border-white/5">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${activePercent}%` }}
+              transition={{ duration: 1, ease: "easeOut" }}
+              className="bg-gradient-to-r from-emerald-600 to-emerald-400 h-full rounded-full relative shadow-[0_0_15px_rgba(16,185,129,0.3)]"
+            >
+              <div className="absolute top-0 right-0 bottom-0 w-8 bg-white/20 blur-[4px]"></div>
+            </motion.div>
+          </div>
         </div>
-        <div className="w-full bg-white/10 h-2.5 rounded-full overflow-hidden">
-          <div
-            className="bg-white/30 h-full rounded-full"
-            style={{ width: `${inactivePercent}%` }}
-          />
+
+        <div className="group">
+          <div className="flex justify-between items-end mb-4">
+            <div className="flex items-center gap-2 text-slate-500">
+              <ShieldOff size={14} />
+              <p className="text-sm font-bold uppercase tracking-widest">Off-boarded</p>
+            </div>
+            <p className="text-xl font-bold text-white font-heading">
+              {inactive} <span className="text-xs text-slate-500 font-medium ml-1">({inactivePercent.toFixed(0)}%)</span>
+            </p>
+          </div>
+          <div className="w-full bg-white/5 h-3 rounded-full overflow-hidden p-[2px] border border-white/5">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${inactivePercent}%` }}
+              transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
+              className="bg-white/10 h-full rounded-full"
+            />
+          </div>
+        </div>
+        
+        <div className="pt-4 border-t border-white/5">
+           <p className="text-[11px] text-slate-500 text-center italic">
+             Workforce metrics are calculated based on current department assignments.
+           </p>
         </div>
       </div>
     </Card>
   )
-}
+}

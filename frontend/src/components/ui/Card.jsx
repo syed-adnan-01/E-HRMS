@@ -1,8 +1,13 @@
-export default function Card({ children }) {
+export default function Card({ children, className = "" }) {
   return (
-    <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl p-6 relative overflow-hidden z-10 w-full mb-6 relative">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-[50px] pointer-events-none"></div>
-      {children}
+    <div className={`relative overflow-hidden rounded-[2.5rem] bg-[#111113]/50 backdrop-blur-3xl border border-white/[0.05] p-8 shadow-2xl ${className}`}>
+      {/* Subtle corner glow */}
+      <div className="absolute top-0 right-0 w-40 h-40 bg-primary/10 rounded-full blur-[80px] pointer-events-none -translate-y-1/2 translate-x-1/2"></div>
+      
+      <div className="relative z-10">
+        {children}
+      </div>
     </div>
   )
 }
+
