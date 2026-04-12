@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, Link } from "react-router-dom"
 import api from "../api/axios"
 
 export default function LandingPage() {
@@ -45,12 +45,23 @@ export default function LandingPage() {
                         <span className="text-2xl font-bold text-white tracking-tight">WorkSphere</span>
                     </div>
 
-                    <button
-                        onClick={handleGetStarted}
-                        className="px-6 py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-full hover:bg-blue-500 hover:shadow-[0_0_15px_rgba(59,130,246,0.4)] transition-all duration-300"
-                    >
-                        Get Started
-                    </button>
+                    <div className="flex items-center gap-4">
+                        <Link 
+                            to="/super-login" 
+                            className="hidden md:flex items-center gap-2 px-4 py-2 text-xs font-bold text-gray-400 hover:text-purple-400 transition-all duration-300 uppercase tracking-widest group"
+                        >
+                            <svg className="w-4 h-4 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                            </svg>
+                            Super Login
+                        </Link>
+                        <button
+                            onClick={handleGetStarted}
+                            className="px-6 py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-full hover:bg-blue-500 hover:shadow-[0_0_15px_rgba(59,130,246,0.4)] transition-all duration-300"
+                        >
+                            Get Started
+                        </button>
+                    </div>
                 </div>
             </nav>
 
@@ -315,6 +326,7 @@ export default function LandingPage() {
                         &copy; {new Date().getFullYear()} WorkSphere HRMS. All rights reserved.
                     </p>
                     <div className="flex gap-4">
+                        <Link to="/super-login" className="text-gray-600 hover:text-purple-400 transition-colors text-xs font-bold uppercase tracking-widest border border-white/5 px-3 py-1 rounded-lg bg-white/5">Super Login</Link>
                         <a href="#" className="text-gray-500 hover:text-white transition-colors text-sm">Privacy Policy</a>
                         <a href="#" className="text-gray-500 hover:text-white transition-colors text-sm">Terms of Service</a>
                         <a href="#" className="text-gray-500 hover:text-white transition-colors text-sm">Contact</a>
