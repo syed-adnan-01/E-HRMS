@@ -226,6 +226,87 @@ export default function LandingPage() {
                     </motion.div>
                 </div>
 
+                {/* Admin Registration Section */}
+                <div id="admin-register" className="container mx-auto px-6 mt-48 pb-20 max-w-4xl relative z-10">
+                    <motion.div 
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        className="relative p-12 md:p-16 rounded-[3.5rem] bg-[#111113]/50 border border-white/5 backdrop-blur-3xl overflow-hidden shadow-3xl"
+                    >
+                        {/* Decorative Background Glows */}
+                        <div className="absolute -top-24 -right-24 w-80 h-80 bg-primary/10 rounded-full blur-[100px]"></div>
+                        <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-blue-600/5 rounded-full blur-[100px]"></div>
+
+                        <div className="relative z-10">
+                            <div className="text-center mb-16">
+                                <h2 className="text-4xl md:text-6xl font-black text-white mb-6 font-heading tracking-tight">Register as Admin</h2>
+                                <p className="text-slate-500 text-lg font-medium">Empower your team. Deploy your company's workspace in seconds.</p>
+                            </div>
+
+                            <form onSubmit={handleAdminRegister} className="space-y-8">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 ml-1">Full Name</label>
+                                        <input 
+                                            type="text"
+                                            required
+                                            placeholder="Enter your name"
+                                            value={adminData.name}
+                                            onChange={(e) => setAdminData({...adminData, name: e.target.value})}
+                                            className="w-full px-6 py-5 rounded-3xl bg-white/5 border border-white/10 text-white placeholder:text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all font-medium"
+                                        />
+                                    </div>
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 ml-1">Corporate Email</label>
+                                        <input 
+                                            type="email"
+                                            required
+                                            placeholder="name@company.com"
+                                            value={adminData.email}
+                                            onChange={(e) => setAdminData({...adminData, email: e.target.value})}
+                                            className="w-full px-6 py-5 rounded-3xl bg-white/5 border border-white/10 text-white placeholder:text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all font-medium"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="space-y-3">
+                                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 ml-1">Organization Name</label>
+                                    <input 
+                                        type="text"
+                                        required
+                                        placeholder="Enter your organization"
+                                        value={adminData.companyName}
+                                        onChange={(e) => setAdminData({...adminData, companyName: e.target.value})}
+                                        className="w-full px-6 py-5 rounded-3xl bg-white/5 border border-white/10 text-white placeholder:text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all font-medium"
+                                    />
+                                </div>
+
+                                <button 
+                                    type="submit"
+                                    disabled={loading}
+                                    className={`w-full py-6 mt-8 bg-primary hover:bg-blue-500 text-white font-bold text-xl rounded-3xl shadow-[0_0_40px_rgba(59,130,246,0.3)] transition-all transform active:scale-95 flex items-center justify-center gap-3 ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                                >
+                                    {loading ? (
+                                        <>
+                                            <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                                            Deploying Workspace...
+                                        </>
+                                    ) : (
+                                        <>
+                                            Register Workspace
+                                            <ArrowRight size={22} />
+                                        </>
+                                    )}
+                                </button>
+                            </form>
+                            
+                            <p className="text-center mt-12 text-[11px] font-bold uppercase tracking-widest text-slate-600">
+                                Protected by Enterprise Grade SSL • Instant Deployment
+                            </p>
+                        </div>
+                    </motion.div>
+                </div>
+
                 {/* Footer Section - Simplified & Refined */}
                 <footer className="w-full border-t border-white/5 mt-32 py-20 px-6">
                     <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-10">
