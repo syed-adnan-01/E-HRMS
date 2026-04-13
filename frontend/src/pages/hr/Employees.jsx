@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react"
 import MainLayout from "../../layouts/MainLayout"
 import Card from "../../components/ui/Card"
-import Table from "../../components/ui/Table"
 import Input from "../../components/ui/Input"
 import Select from "../../components/ui/Select"
 import Modal from "../../components/ui/Modal"
 import Loader from "../../components/ui/Loader"
+import { Edit2, MoreHorizontal, Trash2 } from "lucide-react"
 
 import AddEmployeeForm from "../../components/hr/AddEmployeeForm"
 import EditEmployeeForm from "../../components/hr/EditEmployeeForm"
+import EmployeeProfileModal from "../../components/hr/EmployeeProfileModal"
 
 import {
   getEmployees,
@@ -25,6 +26,7 @@ export default function Employees() {
 
   const [open, setOpen] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
+  const [profileOpen, setProfileOpen] = useState(false)
   const [selected, setSelected] = useState(null)
   const [loading, setLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState(false)
@@ -61,6 +63,16 @@ export default function Employees() {
   const handleEditClick = (emp) => {
     setSelected(emp)
     setEditOpen(true)
+  }
+
+  const handleProfileOpen = (emp) => {
+    setSelected(emp)
+    setProfileOpen(true)
+  }
+
+  const handleProfileClose = () => {
+    setProfileOpen(false)
+    setSelected(null)
   }
 
   // 🔹 UPDATE EMPLOYEE (PUT)
@@ -131,13 +143,85 @@ export default function Employees() {
 
         </div>
 
-        <div className="overflow-x-auto">
-          <Table
-            columns={columns}
-            data={filtered}
-            onEdit={handleEditClick}
-            onDelete={handleDeleteEmployee}
-          />
+        <div className="w-full overflow-x-auto rounded-[2rem] border border-white/5 bg-white/[0.02]">
+          <table className="min-w-full text-left border-separate border-spacing-0">
+            <thead>
+              <tr className="bg-white/5">
+                {columns.map((col, idx) => (
+                  <th
+                    key={col}
+                    className={`p-6 text-slate-500 font-bold text-[10px] uppercase tracking-[0.2em] border-b border-white/5 ${idx === 0 ? "rounded-tl-[2rem]" : ""}`}
+                  >
+                    {col}
+                  </th>
+                ))}
+                <th className="p-6 text-slate-500 font-bold text-[10px] uppercase tracking-[0.2em] border-b border-white/5 text-right rounded-tr-[2rem]">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+
+            <tbody className="divide-y divide-white/[0.03]">
+              {filtered.map((emp) => (
+                <tr key={emp._id} className="group hover:bg-white/[0.03] transition-all duration-300">
+                  <td className="p-6 text-sm font-mono text-primary font-bold whitespace-nowrap">{emp.employeeId}</td>
+                  <td className="p-6 whitespace-nowrap">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-blue-600/20 flex items-center justify-center text-[10px] font-bold text-primary border border-primary/20">
+                        {emp.name.split(" ").map(n => n[0]).join("")}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleProfileOpen(emp)}
+                        className="rounded text-sm font-bold text-white transition-colors hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                        title={`View ${emp.name} profile`}
+                      >
+                        {emp.name}
+                      </button>
+                    </div>
+                  </td>
+                  <td className="p-6 text-sm font-medium text-slate-400 whitespace-nowrap">{emp.department}</td>
+                  <td className="p-6 text-sm font-medium text-slate-400 whitespace-nowrap">{emp.role}</td>
+                  <td className="p-6 whitespace-nowrap">
+                    <span className={`px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-full border ${
+                      emp.status?.toLowerCase() === "active" || emp.status?.toLowerCase() === "present"
+                        ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                        : emp.status?.toLowerCase() === "leave" || emp.status?.toLowerCase() === "absent"
+                          ? "bg-rose-500/10 text-rose-400 border-rose-500/20"
+                          : "bg-white/5 text-slate-500 border-white/10"
+                    }`}>
+                      {emp.status || "N/A"}
+                    </span>
+                  </td>
+                  <td className="p-6 text-right whitespace-nowrap">
+                    <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={() => handleEditClick(emp)}
+                        className="p-2 rounded-lg bg-white/5 text-slate-400 hover:text-primary hover:bg-primary/10 transition-all"
+                        title="Edit Record"
+                      >
+                        <Edit2 size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteEmployee(emp._id)}
+                        className="p-2 rounded-lg bg-white/5 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all"
+                        title="Delete Record"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {filtered.length === 0 && (
+            <div className="p-20 text-center">
+              <MoreHorizontal size={40} className="mx-auto text-slate-700 mb-4 animate-pulse" />
+              <p className="text-slate-500 font-medium">No records found matching your filters.</p>
+            </div>
+          )}
         </div>
       </Card>
 
@@ -155,6 +239,12 @@ export default function Employees() {
           />
         )}
       </Modal>
+
+      <EmployeeProfileModal
+        employee={profileOpen ? selected : null}
+        open={profileOpen}
+        onClose={handleProfileClose}
+      />
         </>
       )}
     </MainLayout>
