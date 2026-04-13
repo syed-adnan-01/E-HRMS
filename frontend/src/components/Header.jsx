@@ -8,6 +8,7 @@ import {
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { globalSearch } from "../api/searchApi"
+import api from "../api/axios"
 
 export default function Header({ toggleSidebar }) {
   const { user, logout } = useAuth()
@@ -22,7 +23,39 @@ export default function Header({ toggleSidebar }) {
   const [searchResults, setSearchResults] = useState({ employees: [], attendance: [], payroll: [] })
   const [isSearching, setIsSearching] = useState(false)
   const [showSearchResults, setShowSearchResults] = useState(false)
+  const [announcements, setAnnouncements] = useState([])
+  const [dismissedIds, setDismissedIds] = useState(() => {
+    const saved = localStorage.getItem('dismissed_broadcasts')
+    return saved ? JSON.parse(saved) : []
+  })
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
   const searchRef = useRef(null)
+  const notifRef = useRef(null)
+
+  useEffect(() => {
+    fetchActiveAnnouncements()
+    const interval = setInterval(fetchActiveAnnouncements, 60000)
+    return () => clearInterval(interval)
+  }, [])
+
+  const fetchActiveAnnouncements = async () => {
+    try {
+      const res = await api.get("/superadmin/announcements/active")
+      setAnnouncements(res.data.data)
+    } catch (err) {
+      console.error("Failed to fetch announcements:", err)
+    }
+  }
+
+  const handleClearNotifications = () => {
+    const allIds = announcements.map(a => a._id)
+    const newDismissed = [...new Set([...dismissedIds, ...allIds])]
+    setDismissedIds(newDismissed)
+    localStorage.setItem('dismissed_broadcasts', JSON.stringify(newDismissed))
+    setIsNotificationsOpen(false)
+  }
+
+  const visibleAnnouncements = announcements.filter(a => !dismissedIds.includes(a._id))
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -32,6 +65,9 @@ export default function Header({ toggleSidebar }) {
       }
       if (searchRef.current && !searchRef.current.contains(event.target)) {
         setShowSearchResults(false)
+      }
+      if (notifRef.current && !notifRef.current.contains(event.target)) {
+        setIsNotificationsOpen(false)
       }
     }
     document.addEventListener("mousedown", handleClickOutside)
@@ -225,10 +261,85 @@ export default function Header({ toggleSidebar }) {
 
       {user && (
         <div className="flex items-center gap-6">
-          <button className="relative text-slate-400 hover:text-white transition-colors hidden sm:block">
-            <Bell size={20} />
-            <span className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full shadow-[0_0_10px_rgba(59,130,246,1)]"></span>
-          </button>
+          {/* Notification Bell with Broadcasts */}
+          <div className="relative" ref={notifRef}>
+            <button 
+              onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+              className={`relative p-2.5 rounded-xl transition-all ${isNotificationsOpen ? 'bg-primary/20 text-primary' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+            >
+              <Bell size={20} />
+              {visibleAnnouncements.length > 0 && (
+                <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-primary text-[8px] font-black text-white rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(59,130,246,1)] border-2 border-background">
+                  {visibleAnnouncements.length}
+                </span>
+              )}
+            </button>
+
+            <AnimatePresence>
+              {isNotificationsOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  className="absolute right-0 mt-3 w-[22rem] bg-[#111113] border border-white/10 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden z-50 backdrop-blur-2xl"
+                >
+                  <div className="p-5 border-b border-white/5 flex justify-between items-center bg-gradient-to-r from-primary/5 to-transparent">
+                    <span className="text-xs font-black uppercase tracking-widest text-white">Notifications</span>
+                    {visibleAnnouncements.length > 0 && <span className="text-[10px] bg-primary/20 text-primary px-2 py-0.5 rounded-md font-black">{visibleAnnouncements.length} NEW</span>}
+                  </div>
+
+                  <div className="max-h-[450px] overflow-y-auto custom-scrollbar p-3 space-y-3">
+                    {visibleAnnouncements.length > 0 ? (
+                      visibleAnnouncements.map((ann) => (
+                        <div key={ann._id} className={`p-4 rounded-2xl border transition-all ${
+                          ann.priority === 'Urgent' ? 'bg-rose-500/5 border-rose-500/10' :
+                          ann.priority === 'Warning' ? 'bg-amber-500/5 border-amber-500/10' :
+                          'bg-primary/5 border-primary/10'
+                        }`}>
+                          <div className="flex items-center gap-2 mb-3">
+                            <div className={`p-1.5 rounded-lg ${
+                              ann.priority === 'Urgent' ? 'bg-rose-500/10 text-rose-500' :
+                              ann.priority === 'Warning' ? 'bg-amber-500/10 text-amber-500' :
+                              'bg-primary/10 text-primary'
+                            }`}>
+                              <Shield size={14} />
+                            </div>
+                            <span className={`text-[10px] font-black uppercase tracking-widest ${
+                              ann.priority === 'Urgent' ? 'text-rose-400' :
+                              ann.priority === 'Warning' ? 'text-amber-400' :
+                              'text-primary'
+                            }`}>SYSTEM {ann.priority}</span>
+                          </div>
+                          <p className="text-sm font-semibold text-white leading-relaxed mb-3">
+                            {ann.message}
+                          </p>
+                          <p className="text-[10px] text-slate-600 font-bold uppercase tracking-widest">
+                             {new Date(ann.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} • {new Date(ann.createdAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="py-12 text-center">
+                        <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-3">
+                          <Bell size={20} className="text-slate-700" />
+                        </div>
+                        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Nothing New Here</p>
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="p-4 bg-white/5 border-t border-white/5 text-center">
+                    <button 
+                      onClick={handleClearNotifications}
+                      className="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-rose-500 transition-colors"
+                    >
+                      Clear all Notifications
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
 
           <div className="h-8 w-[1px] bg-white/5 mx-2 hidden sm:block"></div>
 
