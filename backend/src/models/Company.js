@@ -18,6 +18,11 @@ const employeeSchema = new mongoose.Schema({
     lowercase: true,
     trim: true,
   },
+  phoneNumber: {
+    type: String,
+    trim: true,
+    default: "",
+  },
   department: {
     type: String,
     required: [true, "Department is required"],
@@ -25,6 +30,11 @@ const employeeSchema = new mongoose.Schema({
   role: {
     type: String,
     required: [true, "Role is required"],
+  },
+  monthlySalary: {
+    type: Number,
+    min: [0, "Monthly salary cannot be negative"],
+    default: 0,
   },
   status: {
     type: String,
