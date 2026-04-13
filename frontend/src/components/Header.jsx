@@ -1,26 +1,96 @@
 import { useState, useRef, useEffect } from "react"
 import { useAuth } from "../context/AuthContext"
-import { Menu, Search, Bell, LogOut, User as UserIcon, Settings, ChevronDown, Shield, Mail } from "lucide-react"
+import { useNavigate } from "react-router-dom"
+import { 
+  Menu, Search, Bell, LogOut, User as UserIcon, 
+  Settings, ChevronDown, Shield, Mail, Calendar, 
+  DollarSign, Loader2, X 
+} from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import { globalSearch } from "../api/searchApi"
 
 export default function Header({ toggleSidebar }) {
   const { user, logout } = useAuth()
+  const navigate = useNavigate()
+  
+  // Profile State
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const menuRef = useRef(null)
 
-  // Close dropdown when clicking outside
+  // Search State
+  const [searchQuery, setSearchQuery] = useState("")
+  const [searchResults, setSearchResults] = useState({ employees: [], attendance: [], payroll: [] })
+  const [isSearching, setIsSearching] = useState(false)
+  const [showSearchResults, setShowSearchResults] = useState(false)
+  const searchRef = useRef(null)
+
+  // Close dropdowns when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setIsProfileOpen(false)
+      }
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowSearchResults(false)
       }
     }
     document.addEventListener("mousedown", handleClickOutside)
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
 
+  // Debounced Search
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setSearchResults({ employees: [], attendance: [], payroll: [] })
+      setShowSearchResults(false)
+      return
+    }
+
+    const delayDebounceFn = setTimeout(async () => {
+      setIsSearching(true)
+      setShowSearchResults(true)
+      try {
+        const res = await globalSearch(searchQuery)
+        setSearchResults(res.data)
+      } catch (err) {
+        console.error("Search error:", err)
+      } finally {
+        setIsSearching(false)
+      }
+    }, 400)
+
+    return () => clearTimeout(delayDebounceFn)
+  }, [searchQuery])
+
+  const handleResultClick = (type, item) => {
+    setShowSearchResults(false)
+    setSearchQuery("")
+    
+    // Extract employee name for filtering the target page
+    const nameQuery = item.name || item.employeeName || ""
+    const queryParam = nameQuery ? `?search=${encodeURIComponent(nameQuery)}` : ""
+    
+    switch(type) {
+      case 'employee':
+        navigate(`/employees${queryParam}`)
+        break
+      case 'attendance':
+        navigate(`/attendance${queryParam}`)
+        break
+      case 'payroll':
+        navigate(`/payroll${queryParam}`)
+        break
+      default:
+        break
+    }
+  }
+
+  const hasResults = searchResults.employees.length > 0 || 
+                     searchResults.attendance.length > 0 || 
+                     searchResults.payroll.length > 0
+
   return (
-    <header className="h-20 flex-shrink-0 bg-background/50 backdrop-blur-xl border-b border-white/5 text-slate-200 flex items-center justify-between px-6 md:px-10 w-full z-30">
+    <header className="h-20 flex-shrink-0 bg-background/50 backdrop-blur-xl border-b border-white/5 text-slate-200 flex items-center justify-between px-6 md:px-10 w-full z-40">
       <div className="flex items-center gap-6 flex-1">
         {toggleSidebar && (
           <button onClick={toggleSidebar} className="md:hidden text-slate-400 hover:text-white transition-colors focus:outline-none">
@@ -28,13 +98,128 @@ export default function Header({ toggleSidebar }) {
           </button>
         )}
         
-        <div className="hidden md:flex items-center gap-3 px-4 py-2 bg-white/5 border border-white/5 rounded-xl w-full max-w-md group focus-within:border-primary/50 transition-all">
-          <Search size={18} className="text-slate-500 group-focus-within:text-primary transition-colors" />
-          <input 
-            type="text" 
-            placeholder="Search records, employees..." 
-            className="bg-transparent border-none outline-none text-sm w-full placeholder:text-slate-600"
-          />
+        {/* Search Bar */}
+        <div className="relative flex-1 max-w-md hidden md:block" ref={searchRef}>
+          <div className={`flex items-center gap-3 px-4 py-2.5 bg-white/5 border rounded-xl w-full group transition-all duration-300 ${showSearchResults ? "border-primary/50 shadow-[0_0_20px_rgba(59,130,246,0.1)] mb-0" : "border-white/5"}`}>
+            <Search size={18} className={`${searchQuery ? "text-primary" : "text-slate-500"} transition-colors`} />
+            <input 
+              type="text" 
+              placeholder="Search people, records, months..." 
+              className="bg-transparent border-none outline-none text-sm w-full placeholder:text-slate-600 text-white"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => searchQuery && setShowSearchResults(true)}
+            />
+            {searchQuery && (
+              <button onClick={() => setSearchQuery("")} className="text-slate-500 hover:text-white transition-colors">
+                <X size={14} />
+              </button>
+            )}
+            {isSearching && (
+              <Loader2 size={16} className="text-primary animate-spin" />
+            )}
+          </div>
+
+          {/* Search Results Dropdown */}
+          <AnimatePresence>
+            {showSearchResults && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                className="absolute left-0 right-0 mt-2 bg-[#111113] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 max-h-[480px] overflow-y-auto backdrop-blur-2xl"
+              >
+                {!isSearching && !hasResults ? (
+                  <div className="p-10 text-center">
+                    <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <Search size={20} className="text-slate-600" />
+                    </div>
+                    <p className="text-sm font-medium text-slate-500">No matches found for "{searchQuery}"</p>
+                  </div>
+                ) : (
+                  <div className="py-2">
+                    {/* Employees Section */}
+                    {searchResults.employees.length > 0 && (
+                      <div className="px-2 pb-2">
+                        <div className="px-4 py-2 flex items-center gap-2">
+                          <UserIcon size={12} className="text-primary" />
+                          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Employees</span>
+                        </div>
+                        {searchResults.employees.map((emp) => (
+                          <button
+                            key={emp._id}
+                            onClick={() => handleResultClick('employee', emp)}
+                            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/5 rounded-xl transition-all group text-left"
+                          >
+                            <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                              <UserIcon size={14} />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-semibold text-white truncate">{emp.name}</p>
+                              <p className="text-[11px] text-slate-500 truncate">{emp.department} • {emp.employeeId}</p>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Attendance Section */}
+                    {searchResults.attendance.length > 0 && (
+                      <div className="px-2 pb-2 border-t border-white/5 pt-2">
+                        <div className="px-4 py-2 flex items-center gap-2">
+                          <Calendar size={12} className="text-emerald-500" />
+                          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Attendance Records</span>
+                        </div>
+                        {searchResults.attendance.map((att) => (
+                          <button
+                            key={att._id}
+                            onClick={() => handleResultClick('attendance', att)}
+                            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/5 rounded-xl transition-all group text-left"
+                          >
+                            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500">
+                              <Calendar size={14} />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-semibold text-white truncate">{att.employeeName}</p>
+                              <div className="flex items-center gap-2">
+                                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${att.status === 'Present' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>{att.status}</span>
+                                <span className="text-[10px] text-slate-600 font-medium">{new Date(att.date).toLocaleDateString()}</span>
+                              </div>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Payroll Section */}
+                    {searchResults.payroll.length > 0 && (
+                      <div className="px-2 pb-2 border-t border-white/5 pt-2">
+                        <div className="px-4 py-2 flex items-center gap-2">
+                          <DollarSign size={12} className="text-amber-500" />
+                          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Payroll Documents</span>
+                        </div>
+                        {searchResults.payroll.map((pay) => (
+                          <button
+                            key={pay._id}
+                            onClick={() => handleResultClick('payroll', pay)}
+                            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/5 rounded-xl transition-all group text-left"
+                          >
+                            <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 font-bold text-[10px]">
+                              $
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-semibold text-white truncate">{pay.employeeName}</p>
+                              <p className="text-[11px] text-slate-500">{pay.month} • Net: ${pay.netSalary?.toLocaleString()}</p>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
