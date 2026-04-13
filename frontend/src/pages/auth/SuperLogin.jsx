@@ -38,7 +38,8 @@ export default function SuperLogin() {
       // Store user role & name in AuthContext
       login({
         role: res.data.role,
-        name: res.data.name
+        name: res.data.name,
+        email: email // Store email for display
       })
 
       // Redirect to Super Admin Dashboard

@@ -22,6 +22,9 @@ app.use("/api/admin", adminRoutes)
 import superAdminRoutes from "./routes/superAdminRoutes.js"
 app.use("/api/superadmin", superAdminRoutes)
 
+import searchRoutes from "./routes/searchRoutes.js"
+app.use("/api/search", searchRoutes)
+
 const PORT = process.env.PORT || 5000
 
 // We wrap startup in an async function to ensure DB is ready before server accepts requests

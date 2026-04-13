@@ -1,12 +1,19 @@
 import api from "./axios"
 
 
-// Optionally pass department to filter
-export const getEmployees = (department) => {
-  if (department) {
-    return api.get(`/employees?department=${encodeURIComponent(department)}`)
+// Optionally pass department or search query to filter
+export const getEmployees = (department, search) => {
+  let url = "/employees"
+  const params = new URLSearchParams()
+  if (department) params.append("department", department)
+  if (search) params.append("search", search)
+  
+  const queryString = params.toString()
+  if (queryString) {
+    url += `?${queryString}`
   }
-  return api.get("/employees")
+  
+  return api.get(url)
 }
 
 export const addEmployee = (data) =>

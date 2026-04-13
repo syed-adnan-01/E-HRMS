@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { useSearchParams } from "react-router-dom"
 import MainLayout from "../../layouts/MainLayout"
 import Card from "../../components/ui/Card"
 import Input from "../../components/ui/Input"
@@ -19,9 +20,11 @@ import {
 } from "../../api/employeeApi"
 
 export default function Employees() {
+  const [searchParams] = useSearchParams()
+  const initialSearch = searchParams.get("search") || ""
 
   const [employees, setEmployees] = useState([])
-  const [search, setSearch] = useState("")
+  const [search, setSearch] = useState(initialSearch)
   const [department, setDepartment] = useState("")
 
   const [open, setOpen] = useState(false)
