@@ -1,5 +1,23 @@
 import { BadgeCheck, BriefcaseBusiness, Building2, CircleDot, Mail, Phone, IndianRupee } from "lucide-react"
 
+const formatCurrency = (amount) => {
+  if (amount === null || amount === undefined || amount === "") {
+    return "Not available"
+  }
+
+  const numericAmount = Number(amount)
+
+  if (Number.isNaN(numericAmount)) {
+    return "Not available"
+  }
+
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0
+  }).format(numericAmount)
+}
+
 const getInitials = (name = "") =>
   name
     .split(" ")
@@ -32,12 +50,12 @@ const detailItems = (employee) => [
   },
   {
     label: "Phone Number",
-    
+    value: employee.phoneNumber || "Not available",
     icon: Phone
   },
   {
     label: "Salary Details",
-    
+    value: formatCurrency(employee.monthlySalary),
     icon: IndianRupee
   }]
 

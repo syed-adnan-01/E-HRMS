@@ -8,8 +8,10 @@ export default function EditEmployeeForm({ initial, onSubmit }) {
     employeeId: initial.employeeId,
     name: initial.name,
     email: initial.email,
+    phoneNumber: initial.phoneNumber || "",
     department: initial.department,
     role: initial.role,
+    monthlySalary: initial.monthlySalary ?? "",
     status: initial.status
   })
 
@@ -57,6 +59,12 @@ export default function EditEmployeeForm({ initial, onSubmit }) {
         onChange={handleChange}
       />
 
+      <Input
+        name="phoneNumber"
+        value={form.phoneNumber}
+        onChange={handleChange}
+      />
+
       <Select
         name="department"
         value={form.department}
@@ -71,6 +79,15 @@ export default function EditEmployeeForm({ initial, onSubmit }) {
       <Input
         name="role"
         value={form.role}
+        onChange={handleChange}
+      />
+
+      <Input
+        type="number"
+        min="0"
+        step="0.01"
+        name="monthlySalary"
+        value={form.monthlySalary}
         onChange={handleChange}
       />
 

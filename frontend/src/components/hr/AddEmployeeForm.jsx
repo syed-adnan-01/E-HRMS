@@ -8,8 +8,10 @@ export default function AddEmployeeForm({ onSubmit }) {
     employeeId: "",
     name: "",
     email: "",
+    phoneNumber: "",
     department: "",
     role: "",
+    monthlySalary: "",
     status: "Active"
   })
 
@@ -57,6 +59,12 @@ export default function AddEmployeeForm({ onSubmit }) {
         onChange={handleChange}
       />
 
+      <Input
+        name="phoneNumber"
+        placeholder="Phone Number"
+        onChange={handleChange}
+      />
+
       <Select name="department" onChange={handleChange}>
         <option value="">Select Department</option>
         <option value="Engineering">Engineering</option>
@@ -67,6 +75,15 @@ export default function AddEmployeeForm({ onSubmit }) {
       <Input
         name="role"
         placeholder="Role"
+        onChange={handleChange}
+      />
+
+      <Input
+        type="number"
+        min="0"
+        step="0.01"
+        name="monthlySalary"
+        placeholder="Monthly Salary"
         onChange={handleChange}
       />
 
