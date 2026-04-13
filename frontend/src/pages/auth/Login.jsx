@@ -27,7 +27,11 @@ export default function Login() {
         return
       }
       localStorage.setItem("token", res.data.token)
-      login({ role: res.data.role, name: res.data.name })
+      login({ 
+        role: res.data.role, 
+        name: res.data.name,
+        email: email // Store email for display
+      })
       navigate("/dashboard")
     } catch (err) {
       setError(err.response?.data?.message || "Invalid credentials. Please try again.")
