@@ -92,12 +92,25 @@ export const createStaff = async (req, res) => {
 
 export const getEmployees = async (req, res) => {
   try {
-    const { department } = req.query;
+    const { department, search } = req.query;
     const company = await Company.findById(req.user.companyId).select('employees');
     
     let employees = company.employees;
+
+    // Filter by department if provided
     if (department) {
       employees = employees.filter(emp => emp.department === department);
+    }
+
+    // Filter by search query (name, ID, or email) if provided
+    if (search) {
+      const query = search.toLowerCase();
+      employees = employees.filter(emp => 
+        emp.name.toLowerCase().includes(query) || 
+        emp.employeeId.toLowerCase().includes(query) ||
+        emp.email.toLowerCase().includes(query) ||
+        emp.department.toLowerCase().includes(query)
+      );
     }
     
     res.json(employees);
