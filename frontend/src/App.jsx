@@ -7,6 +7,7 @@ import Loader from "./components/ui/Loader"
 
 const Login = lazy(() => import("./pages/auth/Login"))
 const Register = lazy(() => import("./pages/auth/Register"))
+const OrganizationSignup = lazy(() => import("./pages/auth/OrganizationSignup"))
 const LandingPage = lazy(() => import("./pages/LandingPage"))
 
 const Dashboard = lazy(() => import("./pages/hr/Dashboard"))
@@ -29,6 +30,7 @@ export default function App() {
         <Routes>
 
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<OrganizationSignup />} />
           <Route path="/super-login" element={<SuperLogin />} />
           <Route path="/" element={<LandingPage />} />
 
