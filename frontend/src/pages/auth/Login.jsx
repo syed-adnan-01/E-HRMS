@@ -136,8 +136,11 @@ export default function Login() {
             </div>
           </form>
 
-          <div className="mt-10 pt-8 border-t border-white/5 text-center">
-            <p className="text-slate-500 text-xs font-medium tracking-wide">
+          <div className="mt-10 pt-8 border-t border-white/5 text-center flex flex-col gap-4">
+            <Link to="/signup" className="text-slate-400 hover:text-white transition-colors text-sm font-medium">
+              Don't have an organization? <span className="text-primary hover:underline">Sign up here</span>
+            </Link>
+            <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest opacity-50">
               Authorized Personnel Only • Secure 256-bit SSL
             </p>
           </div>

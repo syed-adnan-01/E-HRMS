@@ -1,4 +1,5 @@
 import User from "../models/userModel.js"
+import Company from "../models/Company.js"
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 
@@ -61,6 +62,65 @@ export const registerUser = async (req, res) => {
     await newUser.save()
     res.status(201).json({ message: "User registered successfully" })
   } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+}
+
+export const organizationSignup = async (req, res) => {
+  const { companyName, name, email, password } = req.body
+
+  try {
+    if (!companyName || !name || !email || !password) {
+      return res.status(400).json({ message: "All fields are required" })
+    }
+
+    const normalizedEmail = email.toLowerCase().trim()
+    
+    // Check if user already exists
+    const existingUser = await User.findOne({ email: normalizedEmail })
+    if (existingUser) {
+      return res.status(400).json({ message: "User with this email already exists" })
+    }
+
+    // Check if company already exists
+    const existingCompany = await Company.findOne({ name: companyName })
+    if (existingCompany) {
+      return res.status(400).json({ message: "Company name already registered" })
+    }
+
+    // 1. Create Company
+    const newCompany = new Company({
+      name: companyName,
+      email: normalizedEmail,
+      adminName: name,
+      status: "Active"
+    })
+    await newCompany.save()
+
+    // 2. Create Admin User
+    const salt = await bcrypt.genSalt(10)
+    const hashedPassword = await bcrypt.hash(password, salt)
+
+    const newAdmin = new User({
+      name,
+      email: normalizedEmail,
+      password: hashedPassword,
+      role: "ADMIN",
+      companyId: newCompany._id
+    })
+    await newAdmin.save()
+
+    res.status(201).json({ 
+      success: true, 
+      message: "Organization registered successfully! You can now log in.",
+      data: {
+        company: newCompany.name,
+        admin: newAdmin.name
+      }
+    })
+
+  } catch (err) {
+    console.error("Org Signup Error:", err)
     res.status(500).json({ message: err.message })
   }
 }

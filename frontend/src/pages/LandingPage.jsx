@@ -71,11 +71,17 @@ export default function LandingPage() {
                             <ShieldAlert size={14} className="group-hover:text-amber-400 transition-colors" />
                             Super Login
                         </Link>
+                        <Link
+                            to="/login"
+                            className="hidden md:flex items-center gap-2 px-4 py-2 text-[10px] font-bold text-slate-500 hover:text-white transition-all duration-300 uppercase tracking-[0.2em] group"
+                        >
+                            Login
+                        </Link>
                         <button
-                            onClick={handleGetStarted}
+                            onClick={() => navigate('/signup')}
                             className="px-6 py-2.5 text-sm font-bold text-white bg-primary rounded-2xl hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] transition-all active:scale-95"
                         >
-                            Get Started
+                            Sign Up
                         </button>
                     </div>
                 </div>
@@ -121,10 +127,10 @@ export default function LandingPage() {
                         className="flex flex-col sm:flex-row gap-6"
                     >
                         <button
-                            onClick={handleGetStarted}
+                            onClick={() => navigate('/signup')}
                             className="px-10 py-5 text-white bg-primary rounded-3xl font-bold text-lg hover:bg-blue-500 hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] transition-all flex items-center gap-3 active:scale-95"
                         >
-                            Get Started Free
+                            Sign Up Your Organization
                             <ArrowRight size={20} />
                         </button>
                         <a
