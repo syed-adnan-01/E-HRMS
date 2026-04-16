@@ -1,8 +1,5 @@
 import express from "express";
 import { 
-    getRegistrations, 
-    approveRegistration, 
-    rejectRegistration,
     getCompanies,
     updateCompanyStatus,
     getCompanyDetails,
@@ -17,9 +14,6 @@ import {
 
 const router = express.Router();
 
-router.get("/registrations", getRegistrations);
-router.post("/approve/:id", approveRegistration);
-router.post("/reject/:id", rejectRegistration);
 router.get("/companies", getCompanies);
 router.patch("/company-status/:id", updateCompanyStatus);
 router.get("/company-details/:id", getCompanyDetails);

@@ -18,11 +18,10 @@ import {
 } from "lucide-react"
 
 export default function SuperAdminDashboard() {
-    const [registrations, setRegistrations] = useState([])
     const [companies, setCompanies] = useState([])
     const [loading, setLoading] = useState(true)
     const [actionLoading, setActionLoading] = useState(null)
-    const [activeTab, setActiveTab] = useState('pending') // 'pending' or 'active'
+    const [activeTab, setActiveTab] = useState('active') // Default to 'active'
     const [searchTerm, setSearchTerm] = useState('')
     const [selectedCompany, setSelectedCompany] = useState(null)
     const [detailsLoading, setDetailsLoading] = useState(false)
@@ -37,13 +36,11 @@ export default function SuperAdminDashboard() {
     const fetchAllData = async () => {
         setLoading(true)
         try {
-            const [regRes, compRes, healthRes, annRes] = await Promise.all([
-                api.get("/superadmin/registrations"),
+            const [compRes, healthRes, annRes] = await Promise.all([
                 api.get("/superadmin/companies"),
                 api.get("/superadmin/health-stats"),
                 api.get("/superadmin/announcements")
             ])
-            setRegistrations(regRes.data.data)
             setCompanies(compRes.data.data)
             setHealthData(healthRes.data.data)
             setAnnouncements(annRes.data.data)
@@ -109,30 +106,6 @@ export default function SuperAdminDashboard() {
         }
     }
 
-    const handleApprove = async (id) => {
-        setActionLoading(id)
-        try {
-            await api.post(`/superadmin/approve/${id}`)
-            await fetchAllData()
-        } catch (error) {
-            console.error("Approval failed", error)
-        } finally {
-            setActionLoading(null)
-        }
-    }
-
-    const handleReject = async (id) => {
-        setActionLoading(id)
-        try {
-            await api.post(`/superadmin/reject/${id}`)
-            await fetchAllData()
-        } catch (error) {
-            console.error("Rejection failed", error)
-        } finally {
-            setActionLoading(null)
-        }
-    }
-
     const handleToggleStatus = async (id, currentStatus) => {
         const newStatus = currentStatus === 'Active' ? 'Suspended' : 'Active'
         
@@ -181,13 +154,10 @@ export default function SuperAdminDashboard() {
         }
     }
 
-    const filteredData = activeTab === 'pending' 
-        ? registrations.filter(r => r.companyName.toLowerCase().includes(searchTerm.toLowerCase()))
-        : companies.filter(c => c.name.toLowerCase().includes(searchTerm.toLowerCase()))
+    const filteredData = companies.filter(c => c.name.toLowerCase().includes(searchTerm.toLowerCase()))
 
     const stats = {
         total: companies.length,
-        pending: registrations.filter(r => r.status === 'Pending').length,
         active: companies.filter(c => c.status === 'Active').length,
         suspended: companies.filter(c => c.status === 'Suspended').length
     }
@@ -235,7 +205,6 @@ export default function SuperAdminDashboard() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
                     {[
                         { label: 'Total Companies', value: stats.total, icon: Building2, color: 'blue' },
-                        { label: 'Pending Approval', value: stats.pending, icon: Clock, color: 'yellow' },
                         { label: 'Active Workspaces', value: stats.active, icon: CheckCircle2, color: 'emerald' },
                         { label: 'Suspended Orgs', value: stats.suspended, icon: ShieldAlert, color: 'rose' }
                     ].map((stat, i) => (
@@ -261,12 +230,6 @@ export default function SuperAdminDashboard() {
                     {/* Toolbar */}
                     <div className="p-8 border-b border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
                         <div className="flex bg-black/40 p-1.5 rounded-2xl border border-white/10">
-                            <button 
-                                onClick={() => setActiveTab('pending')}
-                                className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'pending' ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:text-white'}`}
-                            >
-                                Registration Queue
-                            </button>
                             <button 
                                 onClick={() => setActiveTab('active')}
                                 className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'active' ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:text-white'}`}
@@ -312,9 +275,9 @@ export default function SuperAdminDashboard() {
                                 className="grid gap-6"
                             >
                                 {activeTab === 'health' ? (
-                                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                    <div className="max-w-4xl mx-auto space-y-6 w-full">
                                         {/* Real-time Metrics */}
-                                        <div className="lg:col-span-2 space-y-6">
+                                        <div className="space-y-6">
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                                 <div className="bg-white/5 border border-white/10 p-8 rounded-[2.5rem] backdrop-blur-xl">
                                                     <div className="flex items-center justify-between mb-8">
@@ -359,39 +322,6 @@ export default function SuperAdminDashboard() {
                                                         <p className="text-xl font-black text-emerald-400">{healthData?.dbStatus}</p>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
-
-                                        {/* Security & Alerts */}
-                                        <div className="space-y-6">
-                                            <div className="bg-rose-500/5 border border-rose-500/10 p-8 rounded-[2.5rem] backdrop-blur-xl">
-                                                <div className="flex items-center gap-3 text-rose-500 mb-6">
-                                                    <ShieldAlert size={20} />
-                                                    <span className="text-sm font-black uppercase tracking-widest">Security Alerts</span>
-                                                </div>
-                                                <div className="space-y-4 text-sm font-medium">
-                                                    <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/10">
-                                                        <p className="text-rose-400">Failed root access attempt detected from IP 182.xx</p>
-                                                        <p className="text-[10px] text-rose-500/50 mt-1 uppercase font-bold">Blocked • 4m ago</p>
-                                                    </div>
-                                                    <div className="p-4 rounded-2xl bg-white/5 border border-white/5 opacity-50 text-slate-500">
-                                                        <p>Company B processed batch payroll (421 records)</p>
-                                                        <p className="text-[10px] mt-1 uppercase font-bold text-slate-600">Verified • 12h ago</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="bg-primary/5 border border-primary/10 p-8 rounded-[2.5rem]">
-                                                <div className="flex items-center gap-3 text-primary mb-6">
-                                                    <Users size={20} />
-                                                    <span className="text-sm font-black uppercase tracking-widest">Gateway Traffic</span>
-                                                </div>
-                                                <div className="flex justify-between items-end gap-2 h-24">
-                                                    {[40, 70, 45, 90, 65, 80, 50, 85].map((h, i) => (
-                                                        <div key={i} className="flex-1 bg-primary/20 rounded-t-lg transition-all hover:bg-primary/40" style={{ height: `${h}%` }}></div>
-                                                    ))}
-                                                </div>
-                                                <p className="text-[10px] text-center text-primary font-black uppercase tracking-[0.2em] mt-4">Load: {healthData?.latency} • {healthData?.activeConnections} connections</p>
                                             </div>
                                         </div>
                                     </div>
@@ -527,36 +457,17 @@ export default function SuperAdminDashboard() {
                                                 </div>
 
                                                 <div className="flex items-center gap-3 w-full md:w-auto">
-                                                    {activeTab === 'pending' ? (
-                                                        <>
-                                                            <button 
-                                                                onClick={(e) => { e.stopPropagation(); handleApprove(item._id) }}
-                                                                disabled={actionLoading === item._id}
-                                                                className="flex-1 md:flex-none px-8 py-3 bg-primary hover:bg-blue-500 text-white rounded-2xl font-bold text-sm shadow-lg transition-all active:scale-95 disabled:opacity-50"
-                                                            >
-                                                                {actionLoading === item._id ? 'Processing...' : 'Approve'}
-                                                            </button>
-                                                            <button 
-                                                                onClick={(e) => { e.stopPropagation(); handleReject(item._id) }}
-                                                                disabled={actionLoading === item._id}
-                                                                className="p-3 bg-white/5 hover:bg-rose-500/20 text-slate-400 hover:text-rose-500 rounded-2xl border border-white/10 transition-all disabled:opacity-50"
-                                                            >
-                                                                <XCircle size={20} />
-                                                            </button>
-                                                        </>
-                                                    ) : (
-                                                        <button 
-                                                            onClick={(e) => { e.stopPropagation(); handleToggleStatus(item._id, item.status) }}
-                                                            disabled={actionLoading === item._id}
-                                                            className={`flex-1 md:flex-none px-8 py-3 rounded-2xl font-bold text-sm transition-all active:scale-95 border ${
-                                                                item.status === 'Active' 
-                                                                ? 'bg-rose-500/10 text-rose-500 border-rose-500/20 hover:bg-rose-500/20' 
-                                                                : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20'
-                                                            }`}
-                                                        >
-                                                            {actionLoading === item._id ? '...' : (item.status === 'Active' ? 'Suspend' : 'Activate')}
-                                                        </button>
-                                                    )}
+                                                    <button 
+                                                        onClick={(e) => { e.stopPropagation(); handleToggleStatus(item._id, item.status) }}
+                                                        disabled={actionLoading === item._id}
+                                                        className={`flex-1 md:flex-none px-8 py-3 rounded-2xl font-bold text-sm transition-all active:scale-95 border ${
+                                                            item.status === 'Active' 
+                                                            ? 'bg-rose-500/10 text-rose-500 border-rose-500/20 hover:bg-rose-500/20' 
+                                                            : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20'
+                                                        }`}
+                                                    >
+                                                        {actionLoading === item._id ? '...' : (item.status === 'Active' ? 'Suspend' : 'Activate')}
+                                                    </button>
                                                 </div>
                                             </div>
                                         </motion.div>

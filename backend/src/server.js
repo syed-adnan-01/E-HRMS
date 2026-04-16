@@ -16,9 +16,6 @@ app.use("/api/payroll", payrollRoutes)
 import reportRoutes from "./routes/reportRoutes.js"
 app.use("/api/reports", reportRoutes)
 
-import adminRoutes from "./routes/adminRoutes.js"
-app.use("/api/admin", adminRoutes)
-
 import superAdminRoutes from "./routes/superAdminRoutes.js"
 app.use("/api/superadmin", superAdminRoutes)
 

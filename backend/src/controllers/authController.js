@@ -39,32 +39,6 @@ export const loginUser = async (req, res) => {
   }
 }
 
-export const registerUser = async (req, res) => {
-  const { name, email, password, role } = req.body
-
-  try {
-    const normalizedEmail = email.toLowerCase().trim()
-    const existing = await User.findOne({ email: normalizedEmail })
-    if (existing) {
-      return res.status(400).json({ message: "User already exists" })
-    }
-
-    const salt = await bcrypt.genSalt(10)
-    const hashedPassword = await bcrypt.hash(password, salt)
-
-    const newUser = new User({
-      name,
-      email: normalizedEmail,
-      password: hashedPassword,
-      role: role || "EMPLOYEE"
-    })
-
-    await newUser.save()
-    res.status(201).json({ message: "User registered successfully" })
-  } catch (err) {
-    res.status(500).json({ message: err.message })
-  }
-}
 
 export const organizationSignup = async (req, res) => {
   const { companyName, name, email, password } = req.body
